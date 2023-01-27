@@ -1,0 +1,9 @@
+.bar::before {
+  content: "";
+  width: 105px;
+  background-color: #ccc;
+  height: 1px;
+  left: 0;
+  display: block; 
+  color: rgb(219, 219, 219);
+}
