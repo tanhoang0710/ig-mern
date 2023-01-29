@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useRef, useState } from "react";
 import { LogoFacebook } from "react-ionicons";
 import { Link } from "react-router-dom";
@@ -6,11 +7,14 @@ import "./styles.css";
 export const SignInForm: React.FC = () => {
   const [isPasswordInputChange, setIsPasswordInputChange] = useState<boolean>(false);
   const [isShowTextPassword, setIsShowTextPassword] = useState<boolean>(false);
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangePasswordInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (e.target.value) {
+    if (e.target.value.length > 0) {
+      setPassword(e.target.value);
       setIsPasswordInputChange(true);
     } else {
       setIsPasswordInputChange(false);
@@ -24,19 +28,38 @@ export const SignInForm: React.FC = () => {
     setIsShowTextPassword((prev) => !prev);
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const data = await axios.post(
+        "http://localhost:3000/api/v1/users/signin",
+        {
+          username,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("🚀 ~ file: SignInForm.tsx:37 ~ handleSubmit ~ data", data);
+    } catch (error) {}
+  };
+
   return (
     <div className="flex flex-col items-center">
       <div className="border border-1 border-solid border-[rgb(219, 219, 219)] w-[350px] p-10 pb-4">
         <div className="bg-no-repeat bg-auto bg-img bg-[url('../../public/logo.png')] h-[51px] bg-[50%_-52px] mb-5"></div>
-        <form className="pb-0">
+        <form className="pb-0" onSubmit={handleSubmit}>
           <div className="border border-1 border-solid border-[rgb(219, 219, 219)] rounded-[2px] p-[9px] text-[12px]">
             <input
               type="text"
-              placeholder="Phone number, username, or email"
+              placeholder="Username"
               autoCapitalize="off"
               autoCorrect="off"
               name="username"
               required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="text-ellipsis block mr-0 w-full"
             />
           </div>
@@ -46,9 +69,10 @@ export const SignInForm: React.FC = () => {
               placeholder="Password"
               autoCapitalize="off"
               autoCorrect="off"
-              name="username"
+              name="password"
               required
               ref={passwordInputRef}
+              value={passwordInputRef.current?.value}
               className="text-ellipsis block mr-0 w-full"
               onChange={handleChangePasswordInput}
             />

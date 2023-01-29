@@ -1,0 +1,62 @@
+const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
+const passport = require('../config/passport.config');
+
+const signToken = (id) =>
+    jwt.sign({ id }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+    });
+
+exports.signup = async (req, res) => {
+    const { email, username, fullname, password } = req.body;
+    console.log(
+        '🚀 ~ file: authController.js:21 ~ exports.signup= ~ req.body',
+        req.body
+    );
+    try {
+        const newUser = await User.create({
+            username,
+            email,
+            password,
+            fullname,
+        });
+        res.status(201).json({
+            status: 'success',
+            data: {
+                newUser,
+            },
+        });
+    } catch (error) {
+        console.log(
+            '🚀 ~ file: authController.js:39 ~ exports.signup= ~ error',
+            error
+        );
+        res.status(500).json(
+            error.code === 11000 ? 'Username is existed!' : error
+        );
+    }
+};
+
+exports.signin = async (req, res, next) => {
+    passport.authenticate('local', (err, user) => {
+        if (err) return res.status(500).json(err);
+        if (!user) {
+            return res.status(404).json(err.message);
+        }
+        const token = signToken(user._id);
+        const cookieOptions = {
+            expires: new Date(
+                Date.now() +
+                    process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+            ),
+            httpOnly: true,
+        };
+
+        res.cookie('jwt', token, cookieOptions);
+        return res.status(200).json({
+            status: 'success',
+            token,
+            data: { user },
+        });
+    })(req, res, next);
+};

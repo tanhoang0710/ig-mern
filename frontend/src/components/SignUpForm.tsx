@@ -1,16 +1,24 @@
+import axios, { AxiosError } from "axios";
 import React, { useRef, useState } from "react";
 import { LogoFacebook } from "react-ionicons";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./styles.css";
 
 export const SignUpForm: React.FC = () => {
   const [isPasswordInputChange, setIsPasswordInputChange] = useState<boolean>(false);
   const [isShowTextPassword, setIsShowTextPassword] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [fullname, setFullname] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   const handleChangePasswordInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (e.target.value) {
+    if (e.target.value.length > 0) {
+      setPassword(e.target.value);
       setIsPasswordInputChange(true);
     } else {
       setIsPasswordInputChange(false);
@@ -22,6 +30,29 @@ export const SignUpForm: React.FC = () => {
       passwordInputRef.current?.setAttribute("type", "text");
     } else passwordInputRef.current?.setAttribute("type", "password");
     setIsShowTextPassword((prev) => !prev);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const data = await axios.post("http://localhost:3000/api/v1/users/signup", {
+        email,
+        fullname,
+        username,
+        password,
+      });
+      console.log("🚀 ~ file: SignUpForm.tsx:42 ~ handleSubmit ~ data", data);
+      toast.success("Success! Now you can login!");
+    } catch (error) {
+      // console.log("🚀 ~ file: SignUpForm.tsx:44 ~ handleSubmit ~ error", err);
+      if (axios.isAxiosError(error)) {
+        if (typeof error.response?.data === "string") {
+          toast.error(error.response?.data);
+        } else {
+          toast.error(error.response?.data?.message);
+        }
+      }
+    }
   };
 
   return (
@@ -46,15 +77,17 @@ export const SignUpForm: React.FC = () => {
           <div className="bar"></div>
         </div>
 
-        <form className="pb-0">
+        <form className="pb-0" onSubmit={handleSubmit}>
           <div className="mt-1 border border-1 border-solid border-[rgb(219, 219, 219)] rounded-[2px] p-[9px] text-[12px]">
             <input
               type="text"
-              placeholder="Mobile number or email"
+              placeholder="Email"
               autoCapitalize="off"
               autoCorrect="off"
-              name="mobileNumberEmail"
+              name="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="text-ellipsis block mr-0 w-full"
             />
           </div>
@@ -66,6 +99,8 @@ export const SignUpForm: React.FC = () => {
               autoCorrect="off"
               name="fullname"
               required
+              value={fullname}
+              onChange={(e) => setFullname(e.target.value)}
               className="text-ellipsis block mr-0 w-full"
             />
           </div>
@@ -77,6 +112,8 @@ export const SignUpForm: React.FC = () => {
               autoCorrect="off"
               name="username"
               required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="text-ellipsis block mr-0 w-full"
             />
           </div>
@@ -84,10 +121,9 @@ export const SignUpForm: React.FC = () => {
             <input
               type="password"
               placeholder="Password"
-              autoCapitalize="off"
-              autoCorrect="off"
-              name="username"
+              name="password"
               required
+              value={passwordInputRef.current?.value}
               ref={passwordInputRef}
               className="text-ellipsis block mr-0 w-full"
               onChange={handleChangePasswordInput}
@@ -130,6 +166,7 @@ export const SignUpForm: React.FC = () => {
           <img src="../../public/google-play.png" className="h-10" alt="" />
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
