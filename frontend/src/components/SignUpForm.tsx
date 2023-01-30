@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import React, { useRef, useState } from "react";
-import { LogoFacebook } from "react-ionicons";
+import { LogoGithub, LogoGoogle } from "react-ionicons";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -64,10 +64,17 @@ export const SignUpForm: React.FC = () => {
           Sign up to see photos and videos from your friends.
         </div>
 
-        <button className="text-white bg-blue-500 w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-4">
+        <button className="text-white bg-[#010001] w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-4">
           <div className="flex justify-center py-2 gap-1 cursor-pointer">
-            <LogoFacebook color={"#fff"} height="20px" width="20px" />
-            <span className="text-[#fff] relative font-medium text-[14px]">Log in with Facebook</span>
+            <LogoGithub color={"#fff"} height="20px" width="20px" />
+            <span className="text-[#fff] relative font-medium text-[14px]">Log in with Github</span>
+          </div>
+        </button>
+
+        <button className="text-white bg-[#e34832] w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-1">
+          <div className="flex justify-center py-2 gap-1 cursor-pointer">
+            <LogoGoogle color={"#fff"} height="20px" width="20px" />
+            <span className="text-[#fff] relative font-medium text-[14px]">Log in with Google</span>
           </div>
         </button>
 
@@ -144,7 +151,7 @@ export const SignUpForm: React.FC = () => {
           </p>
           <button
             type="submit"
-            className="text-white bg-blue-500 w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm px-5 py-1.5 text-center mr-2 mb-2 mt-4"
+            className="text-white bg-blue-500 w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm px-5 py-1.5 text-center mr-2 mt-4"
           >
             Sign up
           </button>
@@ -160,7 +167,7 @@ export const SignUpForm: React.FC = () => {
         </div>
       </div>
       <div>
-        <p className="text-center mt-5 font-light mb-4">Get the app.</p>
+        <p className="text-center mt-1 font-light mb-1">Get the app.</p>
         <div className="flex justify-center gap-3">
           <img src="../../public/app-store.png" className="h-10" alt="" />
           <img src="../../public/google-play.png" className="h-10" alt="" />

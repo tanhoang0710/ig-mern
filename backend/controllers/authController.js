@@ -60,3 +60,36 @@ exports.signin = async (req, res, next) => {
         });
     })(req, res, next);
 };
+
+exports.loginWithSocialSuccess = (req, res) => {
+    if (req.user) {
+        return res.status(200).json({
+            success: true,
+            user: req.user,
+            message: 'Login successfully!',
+        });
+    }
+    return res.status(401).json({
+        success: false,
+        message: 'You are not authenticated!',
+    });
+};
+
+exports.loginWithSocialFail = (req, res) => {
+    res.status(401).json({
+        success: false,
+        message: 'You are not authenticated!',
+    });
+};
+
+exports.loginWithGoogle = passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    successRedirect: 'http://localhost:5173/home',
+    failureRedirect: '/api/v1/users/login/failed',
+});
+
+exports.loginWithGithub = passport.authenticate('github', {
+    scope: ['profile', 'email'],
+    successRedirect: 'http://localhost:5173/home',
+    failureRedirect: '/api/v1/users/login/failed',
+});

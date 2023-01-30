@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
-import { LogoFacebook } from "react-ionicons";
+import { LogoGithub, LogoGoogle } from "react-ionicons";
 import { Link } from "react-router-dom";
 import "./styles.css";
 
@@ -43,6 +43,14 @@ export const SignInForm: React.FC = () => {
       );
       console.log("🚀 ~ file: SignInForm.tsx:37 ~ handleSubmit ~ data", data);
     } catch (error) {}
+  };
+
+  const handleLoginWithGoogle = () => {
+    window.open("http://localhost:3000/api/v1/users/google/callback", "_self");
+  };
+
+  const handleLoginWithGithub = () => {
+    window.open("http://localhost:3000/api/v1/users/github/callback", "_self");
   };
 
   return (
@@ -94,9 +102,13 @@ export const SignInForm: React.FC = () => {
           <span className="mx-[18px] relative top-[2px] text-[#7a7a7a]">OR</span>
           <div className="bar"></div>
         </div>
-        <div className="flex justify-center my-5 gap-1 cursor-pointer">
-          <LogoFacebook color={"#00376b"} height="20px" width="20px" />
-          <span className="text-[#00376b] relative font-medium text-[14px]">Log in with Facebook</span>
+        <div className="flex justify-center my-5 gap-1 cursor-pointer" onClick={handleLoginWithGithub}>
+          <LogoGithub color={"#010001"} height="20px" width="20px" />
+          <span className="text-[#010001] relative font-medium text-[14px]">Log in with Github</span>
+        </div>
+        <div className="flex justify-center my-5 gap-1 cursor-pointer" onClick={handleLoginWithGoogle}>
+          <LogoGoogle color={"#e34832"} height="20px" width="20px" />
+          <span className="text-[#e34832] relative font-medium text-[14px]">Log in with Google</span>
         </div>
         <Link to={"/"} className={"text-center block text-[12px] text-[#00376b]"}>
           Forgot password?

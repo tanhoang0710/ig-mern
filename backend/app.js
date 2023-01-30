@@ -9,6 +9,7 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const passport = require('passport');
+const cookieSession = require('cookie-session');
 
 const userRouter = require('./routes/userRoutes');
 
@@ -54,8 +55,16 @@ app.use(xss());
 // Prevent parameter pollution
 app.use(hpp());
 
+app.use(
+    cookieSession({
+        name: 'session',
+        keys: ['tanhun'],
+        maxAge: 24 * 60 * 60 * 100,
+    })
+);
 // use passport
 app.use(passport.initialize());
+app.use(passport.session());
 
 // 3) Routes
 app.use('/api/v1/users', userRouter);

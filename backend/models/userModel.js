@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const findOrCreate = require('mongoose-findorcreate');
 
 const userSchema = new mongoose.Schema({
     fullname: {
@@ -62,6 +63,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         validate: [validator.isMobilePhone, 'Please provide a valid email'],
     },
+    googleId: {
+        type: String,
+        default: '',
+    },
+    githubId: {
+        type: String,
+        default: '',
+    },
 });
 
 userSchema.pre('save', async function (next) {
@@ -72,6 +81,8 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 12);
     next();
 });
+
+userSchema.plugin(findOrCreate);
 
 const User = mongoose.model('User', userSchema);
 
