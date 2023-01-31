@@ -56,7 +56,7 @@ exports.signin = async (req, res, next) => {
         return res.status(200).json({
             status: 'success',
             token,
-            data: { user },
+            user,
         });
     })(req, res, next);
 };
@@ -84,12 +84,34 @@ exports.loginWithSocialFail = (req, res) => {
 
 exports.loginWithGoogle = passport.authenticate('google', {
     scope: ['profile', 'email'],
-    successRedirect: 'http://localhost:5173/home',
+    successRedirect: 'http://localhost:5173/login/success',
     failureRedirect: '/api/v1/users/login/failed',
 });
 
 exports.loginWithGithub = passport.authenticate('github', {
     scope: ['profile', 'email'],
-    successRedirect: 'http://localhost:5173/home',
+    successRedirect: 'http://localhost:5173/login/success',
     failureRedirect: '/api/v1/users/login/failed',
 });
+
+exports.isAuthenticated = async (req, res, next) => {
+    if (req.user) return next();
+    if (req.cookies.jwt) {
+        const decoded = jwt.decode(req.cookies.jwt, process.env.JWT_SECRET);
+        console.log(decoded);
+        const currentUser = await User.findById(decoded.id);
+        if (!currentUser) {
+            return res.status(401).json({
+                success: false,
+                message:
+                    'The user belonging to this token does no longer exist',
+            });
+        }
+        req.user = currentUser;
+        return next();
+    }
+    return res.status(401).json({
+        success: false,
+        message: 'You are not logged in! Please login to get access.',
+    });
+};

@@ -6,6 +6,7 @@ const {
     loginWithSocialSuccess,
     loginWithGoogle,
     loginWithGithub,
+    isAuthenticated,
 } = require('../controllers/authController');
 const { getAllUsers } = require('../controllers/userController');
 
@@ -21,16 +22,22 @@ router.get('/login/failed', loginWithSocialFail);
 
 router.get('/login/success', loginWithSocialSuccess);
 
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get(
+    '/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
 router.get('/google/callback', loginWithGoogle);
 
-router.get('/github', passport.authenticate('github', { scope: ['profile'] }));
+router.get(
+    '/github',
+    passport.authenticate('github', { scope: ['profile', 'email'] })
+);
 router.get('/github/callback', loginWithGithub);
 
 // router.get('/logout', (req, res) => {
 //   req.logout()
 // })
 
-router.route('/').get(getAllUsers);
+router.route('/').get(isAuthenticated, getAllUsers);
 
 module.exports = router;

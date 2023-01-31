@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useRef, useState } from "react";
 import { LogoGithub, LogoGoogle } from "react-ionicons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { setIsAuthenticated, setAuthUser } from "../store/authSlice";
+import { useAppDispatch } from "../store/hooks";
 import "./styles.css";
 
 export const SignInForm: React.FC = () => {
@@ -9,6 +11,9 @@ export const SignInForm: React.FC = () => {
   const [isShowTextPassword, setIsShowTextPassword] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,16 +46,52 @@ export const SignInForm: React.FC = () => {
           withCredentials: true,
         }
       );
-      console.log("🚀 ~ file: SignInForm.tsx:37 ~ handleSubmit ~ data", data);
-    } catch (error) {}
+      if (data.data?.status === "success" && data.data?.user) {
+        dispatch(setIsAuthenticated(true));
+        dispatch(setAuthUser(data.data?.user));
+        navigate("/home");
+      }
+    } catch (error) {
+      dispatch(setIsAuthenticated(false));
+      dispatch(setAuthUser(null));
+      navigate("/home");
+    }
   };
 
-  const handleLoginWithGoogle = () => {
-    window.open("http://localhost:3000/api/v1/users/google/callback", "_self");
+  const handleFetchUser = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/v1/users/login/success", {
+        withCredentials: true,
+      });
+      console.log("🚀 ~ file: SignInForm.tsx:56 ~ handleFetchUser ~ res", res.data?.user);
+      dispatch(setIsAuthenticated(true));
+      dispatch(setAuthUser(res.data?.user));
+      navigate("/home");
+      // setUser(res.data.user);
+    } catch (error) {
+      dispatch(setIsAuthenticated(false));
+      dispatch(setAuthUser(null));
+      navigate("/home");
+    }
   };
 
-  const handleLoginWithGithub = () => {
-    window.open("http://localhost:3000/api/v1/users/github/callback", "_self");
+  const handleLoginSocial = (social: string) => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const newWindow = window.open(
+      `http://localhost:3000/api/v1/users/${social}/callback`,
+      "_blank",
+      "width=500,height=600"
+    );
+
+    if (newWindow) {
+      timer = setInterval(() => {
+        if (newWindow.closed) {
+          console.log("We are authenticated");
+          handleFetchUser();
+          if (timer) clearInterval(timer);
+        }
+      }, 1000);
+    }
   };
 
   return (
@@ -102,11 +143,11 @@ export const SignInForm: React.FC = () => {
           <span className="mx-[18px] relative top-[2px] text-[#7a7a7a]">OR</span>
           <div className="bar"></div>
         </div>
-        <div className="flex justify-center my-5 gap-1 cursor-pointer" onClick={handleLoginWithGithub}>
+        <div className="flex justify-center my-5 gap-1 cursor-pointer" onClick={() => handleLoginSocial("github")}>
           <LogoGithub color={"#010001"} height="20px" width="20px" />
           <span className="text-[#010001] relative font-medium text-[14px]">Log in with Github</span>
         </div>
-        <div className="flex justify-center my-5 gap-1 cursor-pointer" onClick={handleLoginWithGoogle}>
+        <div className="flex justify-center my-5 gap-1 cursor-pointer" onClick={() => handleLoginSocial("google")}>
           <LogoGoogle color={"#e34832"} height="20px" width="20px" />
           <span className="text-[#e34832] relative font-medium text-[14px]">Log in with Google</span>
         </div>
