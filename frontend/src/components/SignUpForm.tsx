@@ -1,9 +1,11 @@
 import axios, { AxiosError } from "axios";
 import React, { useRef, useState } from "react";
 import { LogoGithub, LogoGoogle } from "react-ionicons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { setAuthUser, setIsAuthenticated } from "../store/authSlice";
+import { useAppDispatch } from "../store/hooks";
 import "./styles.css";
 
 export const SignUpForm: React.FC = () => {
@@ -13,6 +15,9 @@ export const SignUpForm: React.FC = () => {
   const [fullname, setFullname] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [username, setUsername] = useState<string>("");
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,6 +60,41 @@ export const SignUpForm: React.FC = () => {
     }
   };
 
+  const handleFetchUser = async () => {
+    try {
+      const res = await axios.get("http://localhost:3000/api/v1/users/login/success", {
+        withCredentials: true,
+      });
+      console.log("🚀 ~ file: SignInForm.tsx:56 ~ handleFetchUser ~ res", res.data);
+      dispatch(setIsAuthenticated(true));
+      dispatch(setAuthUser(res.data?.user));
+      navigate("/home");
+    } catch (error) {
+      dispatch(setIsAuthenticated(false));
+      dispatch(setAuthUser(null));
+      navigate("/home");
+    }
+  };
+
+  const handleLoginSocial = (social: string) => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const newWindow = window.open(
+      `http://localhost:3000/api/v1/users/${social}/callback`,
+      "_blank",
+      "width=500,height=600"
+    );
+
+    if (newWindow) {
+      timer = setInterval(() => {
+        if (newWindow.closed) {
+          console.log("We are authenticated");
+          handleFetchUser();
+          if (timer) clearInterval(timer);
+        }
+      }, 1000);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center relative top-[-50px]">
       <div className="border border-1 border-solid border-[rgb(219, 219, 219)] w-[350px] p-10 pb-4">
@@ -64,14 +104,20 @@ export const SignUpForm: React.FC = () => {
           Sign up to see photos and videos from your friends.
         </div>
 
-        <button className="text-white bg-[#010001] w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-4">
+        <button
+          className="text-white bg-[#010001] w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-4"
+          onClick={() => handleLoginSocial("github")}
+        >
           <div className="flex justify-center py-2 gap-1 cursor-pointer">
             <LogoGithub color={"#fff"} height="20px" width="20px" />
             <span className="text-[#fff] relative font-medium text-[14px]">Log in with Github</span>
           </div>
         </button>
 
-        <button className="text-white bg-[#e34832] w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-1">
+        <button
+          className="text-white bg-[#e34832] w-full focus:outline-none focus:ring-4font-medium rounded-[8px] text-sm text-center mr-2 mb-2 mt-1"
+          onClick={() => handleLoginSocial("google")}
+        >
           <div className="flex justify-center py-2 gap-1 cursor-pointer">
             <LogoGoogle color={"#fff"} height="20px" width="20px" />
             <span className="text-[#fff] relative font-medium text-[14px]">Log in with Google</span>

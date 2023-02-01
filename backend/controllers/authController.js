@@ -63,21 +63,22 @@ exports.signin = async (req, res, next) => {
 
 exports.loginWithSocialSuccess = (req, res) => {
     if (req.user) {
+        const { active, role, ...rest } = req.user;
         return res.status(200).json({
-            success: true,
-            user: req.user,
+            status: 'success',
+            user: rest,
             message: 'Login successfully!',
         });
     }
     return res.status(401).json({
-        success: false,
+        status: 'error',
         message: 'You are not authenticated!',
     });
 };
 
 exports.loginWithSocialFail = (req, res) => {
     res.status(401).json({
-        success: false,
+        status: 'error',
         message: 'You are not authenticated!',
     });
 };
@@ -102,7 +103,7 @@ exports.isAuthenticated = async (req, res, next) => {
         const currentUser = await User.findById(decoded.id);
         if (!currentUser) {
             return res.status(401).json({
-                success: false,
+                status: 'error',
                 message:
                     'The user belonging to this token does no longer exist',
             });
@@ -111,7 +112,7 @@ exports.isAuthenticated = async (req, res, next) => {
         return next();
     }
     return res.status(401).json({
-        success: false,
+        status: 'error',
         message: 'You are not logged in! Please login to get access.',
     });
 };
