@@ -4,6 +4,20 @@
   background-color: #ccc;
   height: 1px;
   left: 0;
-  display: block; 
+  display: block;
   color: rgb(219, 219, 219);
+}
+
+.nav_item {
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+  margin-top: 16px;
+  margin-right: 12px;
+  padding: 12px;
+}
+
+.nav_item:hover {
+  background-color: #fafafa;
+  border-radius: 24px;
 }

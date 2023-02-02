@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import LoginSuccess from "./pages/LoginSuccess/LoginSuccess";
 import NotFound from "./pages/NotFound/NotFound";
+import RootPage from "./pages/Root/RootPage";
 import { SignIn } from "./pages/SignIn/SignIn";
 import { SignUp } from "./pages/SignUp/SignUp";
 import { useAppSelector } from "./store/hooks";
@@ -23,6 +24,7 @@ function App() {
           <Route path="customer" element={<Customer />} />
           <Route path="customer/:id" element={<CustomerDetail />} /> */}
         </Route>
+        <Route path="/test" element={<RootPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

@@ -1,0 +1,15 @@
+/* >= 1920px */
+.sidebar {
+  width: var(--nav-wide-width);
+  height: 100vh;
+  border-right: 1px solid rgba(219, 219, 219, 1);
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1264px) and (max-width: 1919px) {
+  .sidebar {
+    width: var(--nav-medium-width);
+  }
+}

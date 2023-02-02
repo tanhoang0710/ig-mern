@@ -3,6 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --nav-medium-width: 244px;
+  --nav-wide-width: 355px;
+}
+
 *,
 *::before,
 *::after {
