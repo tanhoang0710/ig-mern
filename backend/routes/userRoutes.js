@@ -8,7 +8,7 @@ const {
     loginWithGithub,
     isAuthenticated,
 } = require('../controllers/authController');
-const { getAllUsers } = require('../controllers/userController');
+const { getAllUsers, getAUser } = require('../controllers/userController');
 
 const router = express.Router();
 const passport = require('passport');
@@ -39,5 +39,6 @@ router.get('/github/callback', loginWithGithub);
 // })
 
 router.route('/').get(isAuthenticated, getAllUsers);
+router.route('/:id').get(isAuthenticated, getAUser);
 
 module.exports = router;
