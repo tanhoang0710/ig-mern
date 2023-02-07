@@ -1,7 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import ExplorePage from "./pages/Explore/Explore";
 import Home from "./pages/Home/Home";
 import LoginSuccess from "./pages/LoginSuccess/LoginSuccess";
 import NotFound from "./pages/NotFound/NotFound";
+import ProfilePage from "./pages/Profile/ProfilePage";
 import RootPage from "./pages/Root/RootPage";
 import { SignIn } from "./pages/SignIn/SignIn";
 import { SignUp } from "./pages/SignUp/SignUp";
@@ -17,14 +19,36 @@ function App() {
         <Route path="/login/success" element={<LoginSuccess />} />
         <Route path="/" element={!userAuth ? <SignIn /> : <Navigate to={"/home"} />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/home" element={userAuth ? <Home /> : <Navigate to={"/"} />}>
+        <Route
+          path="/home"
+          element={
+            userAuth ? (
+              <RootPage>
+                <Home />
+              </RootPage>
+            ) : (
+              <Navigate to={"/"} />
+            )
+          }
+        >
           {/* nested route */}
-          {/* <Route path="user" element={<User />} />
-          <Route path="system" element={<System />} />
-          <Route path="customer" element={<Customer />} />
-          <Route path="customer/:id" element={<CustomerDetail />} /> */}
         </Route>
-        <Route path="/test" element={<RootPage />} />
+        <Route
+          path="/explore"
+          element={
+            <RootPage>
+              <ExplorePage />
+            </RootPage>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <RootPage>
+              <ProfilePage />
+            </RootPage>
+          }
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
