@@ -1,3 +1,13 @@
 .layout {
   display: flex;
 }
+/* >= 1920px */
+.content {
+  width: calc(100% - var(--nav-wide-width));
+}
+
+@media (min-width: 1264px) and (max-width: 1919px) {
+  .content {
+    width: calc(100% - var(--nav-medium-width));
+  }
+}

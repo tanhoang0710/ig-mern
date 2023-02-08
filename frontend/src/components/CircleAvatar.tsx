@@ -14,6 +14,7 @@ const CircleAvatar: React.FC<IProps> = ({ url, size, onClick }) => {
       style={{ width: `${size}px`, height: `${size}px` }}
       onClick={onClick}
       className="rounded-full border-[1px]"
+      draggable={false}
     />
   );
 };

@@ -1,3 +1,10 @@
-.layout {
-  display: flex;
+.container_feed {
+  max-width: 470px;
+  margin-right: 32px;
+  width: 100%;
+}
+
+.suggestions {
+  max-width: 319px;
+  width: 100%;
 }

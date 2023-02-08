@@ -6,6 +6,7 @@
   padding-left: 12px;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
 }
 
 @media (min-width: 1264px) and (max-width: 1919px) {

@@ -21,7 +21,7 @@ const RootPage: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className={`${styles.layout}`}>
       <SideBar onClickTab={setTabActive} tabActive={tabActive} />
-      {children}
+      <div className={`${styles.content}`}>{children}</div>
     </div>
   );
 };
