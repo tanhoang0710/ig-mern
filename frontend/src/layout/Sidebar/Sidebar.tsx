@@ -7,8 +7,6 @@ import IconHome from "../../components/Icon/IconHome";
 import IconHomeActive from "../../components/Icon/IconHomeActive";
 import IconMessages from "../../components/Icon/IconMessages";
 import IconMessagesActive from "../../components/Icon/IconMessagesActive";
-import IconMore from "../../components/Icon/IconMore";
-import IconMoreAcive from "../../components/Icon/IconMoreActive";
 import IconNotifications from "../../components/Icon/IconNotifications";
 import IconNotificationsActive from "../../components/Icon/IconNotificationsActive";
 import IconReels from "../../components/Icon/IconReels";
@@ -18,6 +16,8 @@ import IconSearchActive from "../../components/Icon/IconSearchActive";
 import LogoInstagram from "../../components/LogoInstagram";
 import MenuAvatar from "../../components/MenuAvatar";
 import NavItem from "../../components/NavItem";
+import IconMenu from "../../components/Icon/IconMenu";
+import IconMenuActive from "../../components/Icon/IconMenuActive";
 import styles from "./styles.module.css";
 
 interface IProps {
@@ -101,8 +101,8 @@ const SideBar: React.FC<IProps> = ({ tabActive, onClickTab }) => {
       </div>
       <div className="mb-6">
         <NavItem
-          icon={<IconMore />}
-          activeIcon={<IconMoreAcive />}
+          icon={<IconMenu />}
+          activeIcon={<IconMenuActive />}
           title={"More"}
           isActive={tabActive === "more"}
           onClick={() => onClickTab("more")}

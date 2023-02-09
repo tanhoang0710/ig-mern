@@ -1,43 +1,9 @@
-import React from "react";
-
-const IconMore = () => {
+export const IconMore = (): JSX.Element => {
   return (
-    <svg aria-label="Settings" color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24">
-      <line
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        x1="3"
-        x2="21"
-        y1="4"
-        y2="4"
-      ></line>
-      <line
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        x1="3"
-        x2="21"
-        y1="12"
-        y2="12"
-      ></line>
-      <line
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        x1="3"
-        x2="21"
-        y1="20"
-        y2="20"
-      ></line>
+    <svg aria-label="More options" color="#262626" fill="#262626" height="24" role="img" viewBox="0 0 24 24" width="24">
+      <circle cx="12" cy="12" r="1.5"></circle>
+      <circle cx="6" cy="12" r="1.5"></circle>
+      <circle cx="18" cy="12" r="1.5"></circle>
     </svg>
   );
 };
-
-export default IconMore;
