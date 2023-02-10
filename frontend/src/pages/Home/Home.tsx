@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { listPosts } from "../../common/data/listPosts";
 import CircleAvatar from "../../components/CircleAvatar";
 import PostItem from "../../components/PostItem";
 import UserAvatarStory from "../../components/UserAvatarStory";
@@ -16,12 +17,14 @@ const Home: React.FC = () => {
       onClick={() => {
         // navigate("/123");
       }}
-      className={"flex flex-row justify-center"}
+      className={"flex flex-row justify-center pb-16"}
     >
       <div className={styles.container_feed}>
         <UserStory />
 
-        <PostItem />
+        {listPosts?.map((post) => (
+          <PostItem post={post} key={post.id} />
+        ))}
       </div>
       <div className={styles.suggestions}>Div Right</div>
     </div>

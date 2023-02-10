@@ -8,16 +8,25 @@ import { IconEmoji } from "./Icon/IconEmoji";
 import IconApp from "./IconApp/IconApp";
 import UserAvatarStory from "./UserAvatarStory";
 import "./styles.css";
+import { IPost } from "../common/model/post";
+import { useAppSelector } from "../store/hooks";
+import { StringUtils } from "../utils/stringUtils";
 
-const PostItem: React.FC = () => {
+interface IProps {
+  post: IPost;
+}
+
+const PostItem: React.FC<IProps> = ({ post }) => {
+  const userAuth = useAppSelector((state) => state.auth.authUser);
+
   return (
     <div className="bg-white mt-4 rounded-lg border-[1px]">
       {/* Header */}
       <div className="flex flex-row my-2 items-center pl-3">
-        <UserAvatarStory haveSeenBefore={false} size={44} url={"https://randomuser.me/api/portraits/men/78.jpg"} />
+        <UserAvatarStory haveSeenBefore={false} size={32} url={post.user.avatar} />
         <div className="flex flex-col grow mx-2">
-          <p className="text-sm font-semibold">username</p>
-          <p className="text-sm">subtitle</p>
+          <p className="text-sm font-semibold">{post.user.userName}</p>
+          {/* <p className="text-sm">subtitle</p> */}
         </div>
         <IconApp
           icon={<IconMore />}
@@ -28,12 +37,7 @@ const PostItem: React.FC = () => {
       </div>
 
       {/* Media */}
-      <img
-        src="https://images.unsplash.com/photo-1675853501687-6f6ca1667037?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1MHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60"
-        alt=""
-        className="max-h-[30rem] w-full"
-        draggable={false}
-      />
+      <img src={post.image} alt="" className="max-h-[30rem] w-full" draggable={false} />
 
       {/*List Icon  */}
       <div className="flex flex-row m-1">
@@ -71,22 +75,29 @@ const PostItem: React.FC = () => {
         1: Liked (Current user)
         2: Not Yet
       */}
-      <div>
-        <p className="text-sm ml-3">
-          Like by <span className="font-semibold">brunu</span> and <span className="font-semibold">1234 others</span>
-        </p>
+      <div className="text-sm ml-3">
+        {post.isLiked ? (
+          <p>
+            Liked by <span className="font-semibold">{userAuth?.username}</span> and{" "}
+            <span className="font-semibold">{StringUtils.formatNumber(post.totalLike - 1)} others</span>
+          </p>
+        ) : (
+          <span className="text-sm font-semibold">{StringUtils.formatNumber(post.totalLike)} likes</span>
+        )}
       </div>
 
       {/* Desc */}
       <div className="mx-3 my-2">
         <p className="text-sm">
-          <span className="font-semibold">brunu</span> abcxyz
+          <span className="font-semibold">{post.user.userName}</span> {post.description}
         </p>
       </div>
 
       {/* Total comments */}
       <div className="mx-3 my-2">
-        <p className="text-sm font-medium text-secondary-text">View all 1234 comments</p>
+        <p className="text-sm font-medium text-secondary-text">
+          View all {StringUtils.formatNumber(post.totalCmt)} comments
+        </p>
       </div>
 
       {/* Created time */}
