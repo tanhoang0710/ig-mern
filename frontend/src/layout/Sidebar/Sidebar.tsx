@@ -19,6 +19,7 @@ import NavItem from "../../components/NavItem";
 import IconMenu from "../../components/Icon/IconMenu";
 import IconMenuActive from "../../components/Icon/IconMenuActive";
 import styles from "./styles.module.css";
+import { useAppSelector } from "../../store/hooks";
 
 interface IProps {
   tabActive: string;
@@ -26,6 +27,8 @@ interface IProps {
 }
 
 const SideBar: React.FC<IProps> = ({ tabActive, onClickTab }) => {
+  const userAuth = useAppSelector((state) => state.auth.authUser);
+
   return (
     <div className={`${styles.sidebar}`}>
       <div className="cursor-pointer mb-2 mt-5 px-3 pt-5 pb-4">
@@ -57,15 +60,15 @@ const SideBar: React.FC<IProps> = ({ tabActive, onClickTab }) => {
           icon={<IconReels />}
           activeIcon={<IconReelsActive />}
           title={"Reels"}
-          isActive={tabActive === "reels"}
-          onClick={() => onClickTab("reels")}
+          isActive={tabActive === "reels/video"}
+          onClick={() => onClickTab("reels/video")}
         />
         <NavItem
           icon={<IconMessages />}
           activeIcon={<IconMessagesActive />}
           title={"Messages"}
-          isActive={tabActive === "messages"}
-          onClick={() => onClickTab("messages")}
+          isActive={tabActive === "direct/inbox"}
+          onClick={() => onClickTab("direct/inbox")}
         />
         <NavItem
           icon={<IconNotifications />}
@@ -82,18 +85,8 @@ const SideBar: React.FC<IProps> = ({ tabActive, onClickTab }) => {
           onClick={() => onClickTab("create")}
         />
         <NavItem
-          icon={
-            <MenuAvatar
-              url={"https://lh3.googleusercontent.com/a/AEdFTp6MYiDCdCFAW_a_HKuf-XEhrY4zJwz36qK8DAJKMA=s96-c"}
-              isActive={false}
-            />
-          }
-          activeIcon={
-            <MenuAvatar
-              url={"https://lh3.googleusercontent.com/a/AEdFTp6MYiDCdCFAW_a_HKuf-XEhrY4zJwz36qK8DAJKMA=s96-c"}
-              isActive={true}
-            />
-          }
+          icon={<MenuAvatar url={userAuth?.avatar as string} isActive={false} />}
+          activeIcon={<MenuAvatar url={userAuth?.avatar as string} isActive={true} />}
           title={"Profile"}
           isActive={tabActive === "profile"}
           onClick={() => onClickTab("profile")}

@@ -1,7 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { listPosts } from "../../common/data/listPosts";
+import ButtonLink from "../../components/ButtonLink";
 import CircleAvatar from "../../components/CircleAvatar";
+import ItemRow from "../../components/ItemRow";
+import { ListSuggestion } from "../../components/ListSuggestions";
 import PostItem from "../../components/PostItem";
 import UserAvatarStory from "../../components/UserAvatarStory";
 import UserStory from "../../components/UserStory";
@@ -26,7 +29,27 @@ const Home: React.FC = () => {
           <PostItem post={post} key={post.id} />
         ))}
       </div>
-      <div className={styles.suggestions}>Div Right</div>
+      <div className={styles.suggestions}>
+        <ItemRow
+          url={userAuth?.avatar}
+          title={userAuth?.username}
+          subTitle={userAuth?.fullname}
+          rightItem={
+            <ButtonLink
+              textBtn={"Switch"}
+              onClick={(): void => {
+                throw new Error("Function not implemented.");
+              }}
+            />
+          }
+        />
+        <div className="flex flex-row justify-between">
+          <p className="font-bold text-secondary-text text-[14px]">Suggestions For You</p>
+          <button className="text-xs font-bold">See All</button>
+        </div>
+
+        <ListSuggestion />
+      </div>
     </div>
   );
 };
