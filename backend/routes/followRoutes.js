@@ -4,6 +4,7 @@ const {
     followAUser,
     unfollowAUser,
     getAllFollow,
+    checkFollow,
 } = require('../controllers/followController');
 
 const router = express.Router();
@@ -12,6 +13,10 @@ router.use(isAuthenticated);
 
 router.route('/').get(getAllFollow);
 
-router.route('/:otherUserId').post(followAUser).delete(unfollowAUser);
+router
+    .route('/:otherUserId')
+    .get(checkFollow)
+    .post(followAUser)
+    .delete(unfollowAUser);
 
 module.exports = router;

@@ -19,17 +19,15 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.getAUser = async (req, res) => {
-    const { id } = req.params;
-    const user = await Users.findById(id);
+    const { username } = req.params;
+    const user = await Users.findOne({ username });
     if (user)
         return res.status(200).json({
             status: 'success',
-            data: {
-                user,
-            },
+            user,
         });
     return res.status(404).json({
         status: 'fail',
-        message: "Can't find a user with that ID!",
+        message: "Can't find a user with that username!",
     });
 };

@@ -39,6 +39,6 @@ router.get('/github/callback', loginWithGithub);
 // })
 
 router.route('/').get(isAuthenticated, getAllUsers);
-router.route('/:id').get(isAuthenticated, getAUser);
+router.route('/:username').get(isAuthenticated, getAUser);
 
 module.exports = router;

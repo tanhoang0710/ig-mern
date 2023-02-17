@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import CircleAvatar from "./CircleAvatar";
 
 interface IProps {
@@ -22,6 +23,8 @@ const ItemRow: React.FC<IProps> = ({
   subTitle,
   subTitleItem,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-row items-center my-4">
       {leftItem ?? (
@@ -35,7 +38,9 @@ const ItemRow: React.FC<IProps> = ({
       )}
       {bodyItem ?? (
         <div className="flex flex-col px-3 grow">
-          <p className="text-sm font-semibold cursor-pointer">{title}</p>
+          <p className="text-sm font-semibold cursor-pointer" onClick={() => navigate(`/${title?.slice(1)}`)}>
+            {title}
+          </p>
           {subTitleItem ?? <p className="text-sm font-medium text-secondary-text text-ellipsis">{subTitle}</p>}
         </div>
       )}

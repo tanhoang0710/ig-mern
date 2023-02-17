@@ -12,6 +12,7 @@ import RootPage from "./pages/Root/RootPage";
 import SearchPage from "./pages/Search/SearchPage";
 import { SignIn } from "./pages/SignIn/SignIn";
 import { SignUp } from "./pages/SignUp/SignUp";
+import UserPage from "./pages/User/UserPage";
 import { useAppSelector } from "./store/hooks";
 
 function App() {
@@ -91,6 +92,14 @@ function App() {
           element={
             <RootPage>
               <ProfilePage />
+            </RootPage>
+          }
+        />
+        <Route
+          path="/:username"
+          element={
+            <RootPage>
+              <UserPage />
             </RootPage>
           }
         />
