@@ -8,6 +8,8 @@ import IconTagged from "../../components/Icon/IconTagged";
 import IconReelsSmall from "../../components/Icon/IconReelsSmall";
 import IconPostActive from "../../components/Icon/IconPostActive";
 import IconArrowDown from "../../components/Icon/IconArrowDown";
+import { IFollower } from "../../interfaces/follow.interface";
+import ModalFollow from "../../components/ModalFollow";
 
 import "./style.css";
 
@@ -15,35 +17,42 @@ const UserPage: React.FC = () => {
   const params = useParams<{ username: string }>();
   const [userInfor, setUserInfor] = useState<any>();
   const [checkFollow, setCheckFollow] = useState<any>();
+  const [listFollow, setListFollow] = useState<IFollower[]>();
+  const [countFollowers, setCountFollowers] = useState<number>(0);
+  const [countFollowing, setCountFollowing] = useState<number>(0);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const fetchUser = async () => {
     // const data = await axios.get(`http://localhost:3000/api/v1/users/${params.username}`, {
     //   withCredentials: true,
     // });
-    const data = await axios.get(`http://localhost:3000/api/v1/users/testtest`, {
+    const data = await axios.get(`http://localhost:3000/api/v1/users/tanhoang0710`, {
       withCredentials: true,
     });
-    console.log("🚀 ~ file: UserPage.tsx:12 ~ fetchUser ~ data", data.data.user);
-    setUserInfor(data.data.user);
+    console.log("🚀 ~ file: UserPage.tsx:12 ~ fetchUser ~ data", data.data?.user);
+    setUserInfor(data.data?.user);
+    setCountFollowers(data.data?.user?.countFollowers);
+    setCountFollowing(data.data?.user?.countFollowing);
 
-    const check = await axios.get(`http://localhost:3000/api/v1/follow/${data.data.user._id}`, {
+    const check = await axios.get(`http://localhost:3000/api/v1/follow/${data.data?.user?._id}`, {
       withCredentials: true,
     });
     setCheckFollow(check.data);
   };
 
   const handleFollow = async () => {
-    const res = await axios.post(`http://localhost:3000/api/v1/follow/${userInfor._id}`, undefined, {
+    const res = await axios.post(`http://localhost:3000/api/v1/follow/${userInfor?._id}`, undefined, {
       withCredentials: true,
     });
-    if (res.data.status === "success") {
+    if (res.data?.status === "success") {
       setCheckFollow((prev: any) => {
         return {
           ...prev,
           following: true,
         };
       });
-    } else if (res.data.status === "fail") {
+      setCountFollowers(countFollowers + 1);
+    } else if (res.data?.status === "fail") {
       setCheckFollow((prev: any) => {
         return {
           ...prev,
@@ -54,17 +63,30 @@ const UserPage: React.FC = () => {
   };
 
   const handleUnfollow = async () => {
-    const res = await axios.delete(`http://localhost:3000/api/v1/follow/${userInfor._id}`, {
+    const res = await axios.delete(`http://localhost:3000/api/v1/follow/${userInfor?._id}`, {
       withCredentials: true,
     });
-    if (res.data.status === "success") {
+    if (res.data?.status === "success") {
       setCheckFollow((prev: any) => {
         return {
           ...prev,
           following: false,
         };
       });
+      setCountFollowers(countFollowers - 1);
     }
+  };
+
+  const handleGetListFollow = async (type: string) => {
+    const res = await axios.get(`http://localhost:3000/api/v1/follow/get-follow/${userInfor?._id}`, {
+      params: {
+        type,
+      },
+      withCredentials: true,
+    });
+    if (type === "followers") setListFollow(res.data?.followers);
+    else if (type === "followings") setListFollow(res.data?.followees);
+    console.log("🚀 ~ file: UserPage.tsx:79 ~ handleShowListFollow ~ res.data?.followers", res.data?.followers);
   };
 
   useEffect(() => {
@@ -120,14 +142,24 @@ const UserPage: React.FC = () => {
             </button>
           </div>
           <div className="flex mb-[20px] gap-10 text-[16px]">
-            <p>
-              <span className=" font-bold">5</span> post
+            <p className="cursor-pointer">
+              <span className="font-bold">5</span> post
             </p>
-            <p>
-              <span className=" font-bold">22</span> followers
+            <p
+              className="cursor-pointer"
+              onClick={() => {
+                handleGetListFollow("followers").then(() => setShowModal(true));
+              }}
+            >
+              <span className="font-bold">{countFollowers}</span> followers
             </p>
-            <p>
-              <span className=" font-bold">0</span> following
+            <p
+              className="cursor-pointer"
+              onClick={() => {
+                handleGetListFollow("followings").then(() => setShowModal(true));
+              }}
+            >
+              <span className="font-bold">{countFollowing}</span> following
             </p>
           </div>
           <div>{userInfor?.fullname}</div>
@@ -160,17 +192,20 @@ const UserPage: React.FC = () => {
       {/* Post */}
       <div className="w-full border-t-[1px] border-[rgb(219, 219, 219)] mt-[44px]">
         <ul className="flex justify-center gap-[60px]">
-          <li className="flex items-center border-t-[1px] border-black justify-center text-[12px] gap-1 font-semibold tracking-[2px] py-[15px]">
+          <li className="cursor-pointer flex items-center border-t-[1px] border-black justify-center text-[12px] gap-1 font-semibold tracking-[2px] py-[15px]">
             <IconPostActive /> POST
           </li>
-          <li className="flex items-center justify-center text-[12px] gap-1 font-semibold tracking-[2px] py-[15px] text-secondary-text">
+          <li className="cursor-pointer flex items-center justify-center text-[12px] gap-1 font-semibold tracking-[2px] py-[15px] text-secondary-text">
             <IconReelsSmall /> REELS
           </li>
-          <li className="flex items-center justify-center text-[12px] gap-1 font-semibold tracking-[2px] py-[15px] text-secondary-text">
+          <li className="cursor-pointer flex items-center justify-center text-[12px] gap-1 font-semibold tracking-[2px] py-[15px] text-secondary-text">
             <IconTagged /> TAGGED
           </li>
         </ul>
       </div>
+      {/* Modal */}
+
+      {showModal && <ModalFollow onHandleFollow={handleFollow} data={listFollow || []} setShowModal={setShowModal} />}
     </div>
   );
 };

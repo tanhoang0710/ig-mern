@@ -13,6 +13,8 @@ router.use(isAuthenticated);
 
 router.route('/').get(getAllFollow);
 
+router.route('/get-follow/:otherUserId').get(getAllFollow);
+
 router
     .route('/:otherUserId')
     .get(checkFollow)

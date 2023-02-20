@@ -32,6 +32,7 @@ const Home: React.FC = () => {
           subTitle={userAuth?.fullname}
           rightItem={
             <ButtonLink
+              outline
               textBtn={"Switch"}
               onClick={(): void => {
                 throw new Error("Function not implemented.");

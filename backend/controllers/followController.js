@@ -88,8 +88,10 @@ exports.checkFollow = async (req, res) => {
 exports.getAllFollow = async (req, res) => {
     const { type } = req.query;
     const { user } = req;
-    if (type === 'follower') {
-        const followers = await Follow.find({ followee: user._id })
+    const { otherUserId } = req.params;
+    const id = otherUserId ? otherUserId : user._id;
+    if (type === 'followers') {
+        const followers = await Follow.find({ followee: id })
             .populate('follower')
             .select('-followee -__v');
         return res.status(200).json({
@@ -97,7 +99,7 @@ exports.getAllFollow = async (req, res) => {
             followers,
         });
     }
-    const followees = await Follow.find({ follower: user._id })
+    const followees = await Follow.find({ follower: id })
         .populate('followee')
         .select('-follower -__v');
     return res.status(200).json({

@@ -13,6 +13,7 @@ const cookieSession = require('cookie-session');
 
 const userRouter = require('./routes/userRoutes');
 const followRouter = require('./routes/followRoutes');
+const postRouter = require('./routes/postRoutes');
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.use(passport.session());
 // 3) Routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/follow', followRouter);
+app.use('/api/v1/post', postRouter);
 
 app.all('*', (req, res, next) => {
     console.log(`Can't find ${req.originalUrl} on this server`);
