@@ -40,15 +40,7 @@ exports.unfollowAUser = async (req, res) => {
 
 exports.checkFollow = async (req, res) => {
     const { user } = req;
-    console.log(
-        '🚀 ~ file: followController.js:43 ~ exports.checkFollow= ~ user',
-        user._id
-    );
     const { otherUserId } = req.params;
-    console.log(
-        '🚀 ~ file: followController.js:45 ~ exports.checkFollow= ~ otherUserId',
-        otherUserId
-    );
     const isOtherUserFollow = await Follow.findOne({
         followee: user._id,
         follower: otherUserId,
@@ -94,6 +86,56 @@ exports.getAllFollow = async (req, res) => {
         const followers = await Follow.find({ followee: id })
             .populate('follower')
             .select('-followee -__v');
+        let checkFollow = {};
+        if (otherUserId) {
+            const checkFollowWithUser = [];
+            await Promise.all(
+                followers.map(async (follower) => {
+                    const isOtherUserFollow = await Follow.findOne({
+                        followee: user._id,
+                        follower: follower.toObject().follower._id,
+                    });
+
+                    const isMeFollow = await Follow.findOne({
+                        followee: follower.toObject().follower._id,
+                        follower: user._id,
+                    });
+                    if (isOtherUserFollow && isMeFollow) {
+                        checkFollow = {
+                            following: true,
+                            followed: true,
+                            followEachOther: true,
+                        };
+                    } else if (isOtherUserFollow) {
+                        checkFollow = {
+                            following: false,
+                            followed: true,
+                            followEachOther: false,
+                        };
+                    } else if (isMeFollow) {
+                        checkFollow = {
+                            following: true,
+                            followed: false,
+                            followEachOther: false,
+                        };
+                    } else {
+                        checkFollow = {
+                            following: false,
+                            followed: false,
+                            followEachOther: false,
+                        };
+                    }
+                    checkFollowWithUser.push({
+                        ...follower.toObject(),
+                        ...checkFollow,
+                    });
+                })
+            );
+            return res.status(200).json({
+                status: 'success',
+                followers: checkFollowWithUser,
+            });
+        }
         return res.status(200).json({
             status: 'success',
             followers,
@@ -102,6 +144,56 @@ exports.getAllFollow = async (req, res) => {
     const followees = await Follow.find({ follower: id })
         .populate('followee')
         .select('-follower -__v');
+    let checkFollow = {};
+    if (otherUserId) {
+        const checkFollowWithUser = [];
+        await Promise.all(
+            followees.map(async (followee) => {
+                const isOtherUserFollow = await Follow.findOne({
+                    followee: user._id,
+                    follower: followee.toObject().followee._id,
+                });
+
+                const isMeFollow = await Follow.findOne({
+                    followee: followee.toObject().followee._id,
+                    follower: user._id,
+                });
+                if (isOtherUserFollow && isMeFollow) {
+                    checkFollow = {
+                        following: true,
+                        followed: true,
+                        followEachOther: true,
+                    };
+                } else if (isOtherUserFollow) {
+                    checkFollow = {
+                        following: false,
+                        followed: true,
+                        followEachOther: false,
+                    };
+                } else if (isMeFollow) {
+                    checkFollow = {
+                        following: true,
+                        followed: false,
+                        followEachOther: false,
+                    };
+                } else {
+                    checkFollow = {
+                        following: false,
+                        followed: false,
+                        followEachOther: false,
+                    };
+                }
+                checkFollowWithUser.push({
+                    ...followee.toObject(),
+                    ...checkFollow,
+                });
+            })
+        );
+        return res.status(200).json({
+            status: 'success',
+            followees: checkFollowWithUser,
+        });
+    }
     return res.status(200).json({
         status: 'success',
         followees,

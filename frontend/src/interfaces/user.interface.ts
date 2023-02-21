@@ -1,11 +1,13 @@
 import { IPost } from "./post.interface";
 
 export interface IUser {
-  id: string;
+  _id: string;
   fullname: string;
   email: string;
   username: string;
   avatar: string;
   posts: IPost[];
   bio: string;
+  countFollowers: number;
+  countFollowing: number;
 }

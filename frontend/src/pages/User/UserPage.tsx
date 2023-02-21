@@ -8,19 +8,24 @@ import IconTagged from "../../components/Icon/IconTagged";
 import IconReelsSmall from "../../components/Icon/IconReelsSmall";
 import IconPostActive from "../../components/Icon/IconPostActive";
 import IconArrowDown from "../../components/Icon/IconArrowDown";
-import { IFollower } from "../../interfaces/follow.interface";
-import ModalFollow from "../../components/ModalFollow";
+import { IFollower } from "../../interfaces/follower.interface";
+import ModalFollower from "../../components/ModalFollower";
+import ModalFollowing from "../../components/ModalFollowing";
+import { IFollowing } from "../../interfaces/following.interface";
+import { IUser } from "../../interfaces/user.interface";
 
 import "./style.css";
 
 const UserPage: React.FC = () => {
   const params = useParams<{ username: string }>();
-  const [userInfor, setUserInfor] = useState<any>();
+  const [userInfor, setUserInfor] = useState<IUser>();
   const [checkFollow, setCheckFollow] = useState<any>();
-  const [listFollow, setListFollow] = useState<IFollower[]>();
+  const [listFollower, setListFollower] = useState<IFollower[]>();
+  const [listFollowing, setListFollowing] = useState<IFollowing[]>();
   const [countFollowers, setCountFollowers] = useState<number>(0);
   const [countFollowing, setCountFollowing] = useState<number>(0);
-  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showModalFollower, setShowModalFollower] = useState<boolean>(false);
+  const [showModalFollowing, setShowModalFollowing] = useState<boolean>(false);
 
   const fetchUser = async () => {
     // const data = await axios.get(`http://localhost:3000/api/v1/users/${params.username}`, {
@@ -84,9 +89,8 @@ const UserPage: React.FC = () => {
       },
       withCredentials: true,
     });
-    if (type === "followers") setListFollow(res.data?.followers);
-    else if (type === "followings") setListFollow(res.data?.followees);
-    console.log("🚀 ~ file: UserPage.tsx:79 ~ handleShowListFollow ~ res.data?.followers", res.data?.followers);
+    if (type === "followers") setListFollower(res.data?.followers);
+    else if (type === "followings") setListFollowing(res.data?.followees);
   };
 
   useEffect(() => {
@@ -98,7 +102,7 @@ const UserPage: React.FC = () => {
       {/* Header */}
       <div className="flex gap-[30px] mb-[44px]">
         <div className="w-[30%] flex justify-center">
-          <UserAvatarStory haveSeenBefore={false} size={150} url={userInfor?.avatar} />
+          <UserAvatarStory haveSeenBefore={false} size={150} url={userInfor?.avatar!} />
         </div>
         <div className="mt-[12px]">
           <div className="flex items-center mb-[20px]">
@@ -148,7 +152,7 @@ const UserPage: React.FC = () => {
             <p
               className="cursor-pointer"
               onClick={() => {
-                handleGetListFollow("followers").then(() => setShowModal(true));
+                handleGetListFollow("followers").then(() => setShowModalFollower(true));
               }}
             >
               <span className="font-bold">{countFollowers}</span> followers
@@ -156,21 +160,21 @@ const UserPage: React.FC = () => {
             <p
               className="cursor-pointer"
               onClick={() => {
-                handleGetListFollow("followings").then(() => setShowModal(true));
+                handleGetListFollow("followings").then(() => setShowModalFollowing(true));
               }}
             >
               <span className="font-bold">{countFollowing}</span> following
             </p>
           </div>
           <div>{userInfor?.fullname}</div>
-          <div>{userInfor?.description}</div>
+          <div>{userInfor?.bio}</div>
         </div>
       </div>
 
       {/* Story */}
       <div className="flex justify-start mx-[10px] gap-[15px]">
         <div className="flex flex-col justify-center items-center px-[15px]">
-          <UserAvatarStory haveSeenBefore={true} size={77} url={userInfor?.avatar} />
+          <UserAvatarStory haveSeenBefore={true} size={77} url={userInfor?.avatar!} />
           <p
             className="text-ellipsis overflow-hidden max-w-[74px] text-xs pt-[6px] px-[2px]"
             style={{ color: false ? "#8e8e8e" : "black" }}
@@ -179,7 +183,7 @@ const UserPage: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col justify-center items-center px-[15px]">
-          <UserAvatarStory haveSeenBefore={true} size={77} url={userInfor?.avatar} />
+          <UserAvatarStory haveSeenBefore={true} size={77} url={userInfor?.avatar!} />
           <p
             className="text-ellipsis overflow-hidden max-w-[74px] text-xs pt-[6px] px-[2px]"
             style={{ color: false ? "#8e8e8e" : "black" }}
@@ -203,9 +207,26 @@ const UserPage: React.FC = () => {
           </li>
         </ul>
       </div>
+
       {/* Modal */}
 
-      {showModal && <ModalFollow onHandleFollow={handleFollow} data={listFollow || []} setShowModal={setShowModal} />}
+      {showModalFollower && (
+        <ModalFollower
+          user={userInfor!}
+          data={listFollower || []}
+          setShowModalFollower={setShowModalFollower}
+          setListFollower={setListFollower}
+        />
+      )}
+
+      {showModalFollowing && (
+        <ModalFollowing
+          user={userInfor!}
+          data={listFollowing || []}
+          setShowModalFollowing={setShowModalFollowing}
+          setListFollowing={setListFollowing}
+        />
+      )}
     </div>
   );
 };

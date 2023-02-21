@@ -26,16 +26,8 @@ const ItemRow: React.FC<IProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-row items-center my-4">
-      {leftItem ?? (
-        <CircleAvatar
-          url={url!}
-          size={size}
-          onClick={function (): void {
-            throw new Error("Function not implemented.");
-          }}
-        />
-      )}
+    <div className="flex flex-row items-center my-4 justify-center">
+      {leftItem ?? <CircleAvatar url={url!} size={size} onClick={function (): void {}} />}
       {bodyItem ?? (
         <div className="flex flex-col px-3 grow">
           <p className="text-sm font-semibold cursor-pointer" onClick={() => navigate(`/${title?.slice(1)}`)}>
