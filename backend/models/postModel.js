@@ -13,17 +13,19 @@ const postSchema = new mongoose.Schema(
             default: Date.now(),
             select: false,
         },
-        liked_by: {
-            type: mongoose.Schema.ObjectId,
-            ref: 'User',
-        },
-        caption: String,
-        tagged_user: [
+        liked_by: [
             {
                 type: mongoose.Schema.ObjectId,
                 ref: 'User',
             },
         ],
+        caption: String,
+        // tagged_user: [
+        //     {
+        //         type: mongoose.Schema.ObjectId,
+        //         ref: 'User',
+        //     },
+        // ],
     },
     {
         toJSON: {

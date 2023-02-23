@@ -5,6 +5,7 @@ const Post = require('../models/postModel');
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
+    console.log('🚀 ~ file: postController.js:8 ~ multerFilter ~ file:', file);
     if (file.mimetype.startsWith('image')) {
         cb(null, true);
     } else {
