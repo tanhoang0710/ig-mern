@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import IconThreeDot from "../../components/Icon/IconThreeDot";
@@ -31,24 +31,37 @@ const UserPage: React.FC = () => {
     // const data = await axios.get(`http://localhost:3000/api/v1/users/${params.username}`, {
     //   withCredentials: true,
     // });
-    const data = await axios.get(`http://localhost:3000/api/v1/users/tanhoang0710`, {
-      withCredentials: true,
-    });
-    console.log("🚀 ~ file: UserPage.tsx:12 ~ fetchUser ~ data", data.data?.user);
+    const data = await axios.get(
+      `http://localhost:3000/api/v1/users/tanhoang0710`,
+      {
+        withCredentials: true,
+      }
+    );
+    console.log(
+      "🚀 ~ file: UserPage.tsx:12 ~ fetchUser ~ data",
+      data.data?.user
+    );
     setUserInfor(data.data?.user);
     setCountFollowers(data.data?.user?.countFollowers);
     setCountFollowing(data.data?.user?.countFollowing);
 
-    const check = await axios.get(`http://localhost:3000/api/v1/follow/${data.data?.user?._id}`, {
-      withCredentials: true,
-    });
+    const check = await axios.get(
+      `http://localhost:3000/api/v1/follow/${data.data?.user?._id}`,
+      {
+        withCredentials: true,
+      }
+    );
     setCheckFollow(check.data);
   };
 
   const handleFollow = async () => {
-    const res = await axios.post(`http://localhost:3000/api/v1/follow/${userInfor?._id}`, undefined, {
-      withCredentials: true,
-    });
+    const res = await axios.post(
+      `http://localhost:3000/api/v1/follow/${userInfor?._id}`,
+      undefined,
+      {
+        withCredentials: true,
+      }
+    );
     if (res.data?.status === "success") {
       setCheckFollow((prev: any) => {
         return {
@@ -68,9 +81,12 @@ const UserPage: React.FC = () => {
   };
 
   const handleUnfollow = async () => {
-    const res = await axios.delete(`http://localhost:3000/api/v1/follow/${userInfor?._id}`, {
-      withCredentials: true,
-    });
+    const res = await axios.delete(
+      `http://localhost:3000/api/v1/follow/${userInfor?._id}`,
+      {
+        withCredentials: true,
+      }
+    );
     if (res.data?.status === "success") {
       setCheckFollow((prev: any) => {
         return {
@@ -83,15 +99,43 @@ const UserPage: React.FC = () => {
   };
 
   const handleGetListFollow = async (type: string) => {
-    const res = await axios.get(`http://localhost:3000/api/v1/follow/get-follow/${userInfor?._id}`, {
-      params: {
-        type,
-      },
-      withCredentials: true,
-    });
+    const res = await axios.get(
+      `http://localhost:3000/api/v1/follow/get-follow/${userInfor?._id}`,
+      {
+        params: {
+          type,
+        },
+        withCredentials: true,
+      }
+    );
     if (type === "followers") setListFollower(res.data?.followers);
     else if (type === "followings") setListFollowing(res.data?.followees);
   };
+
+  const [audioUrl, setAudioUrl] = useState<string>("");
+
+  const fetch = async () => {
+    const data: AxiosResponse<Blob> = await axios.get(
+      "http://localhost:3000/music/Justin_Bieber_Baby_ft_Ludacris.mp3",
+      {
+        withCredentials: true,
+        responseType: "blob",
+      }
+    );
+    const url = URL.createObjectURL(data.data);
+
+    // Set object URL as state
+    setAudioUrl(url);
+    console.log("🚀 ~ file: Home.tsx:19 ~ fetch ~ data:", data);
+  };
+
+  useEffect(() => {
+    fetch();
+
+    return () => {
+      URL.revokeObjectURL(audioUrl);
+    };
+  }, []);
 
   useEffect(() => {
     fetchUser();
@@ -102,11 +146,17 @@ const UserPage: React.FC = () => {
       {/* Header */}
       <div className="flex gap-[30px] mb-[44px]">
         <div className="w-[30%] flex justify-center">
-          <UserAvatarStory haveSeenBefore={false} size={150} url={userInfor?.avatar!} />
+          <UserAvatarStory
+            haveSeenBefore={false}
+            size={150}
+            url={userInfor?.avatar!}
+          />
         </div>
         <div className="mt-[12px]">
           <div className="flex items-center mb-[20px]">
-            <p className="font-normal text-[20px] mr-5">{userInfor?.username}</p>
+            <p className="font-normal text-[20px] mr-5">
+              {userInfor?.username}
+            </p>
 
             {checkFollow?.following ? (
               <>
@@ -152,7 +202,9 @@ const UserPage: React.FC = () => {
             <p
               className="cursor-pointer"
               onClick={() => {
-                handleGetListFollow("followers").then(() => setShowModalFollower(true));
+                handleGetListFollow("followers").then(() =>
+                  setShowModalFollower(true)
+                );
               }}
             >
               <span className="font-bold">{countFollowers}</span> followers
@@ -160,7 +212,9 @@ const UserPage: React.FC = () => {
             <p
               className="cursor-pointer"
               onClick={() => {
-                handleGetListFollow("followings").then(() => setShowModalFollowing(true));
+                handleGetListFollow("followings").then(() =>
+                  setShowModalFollowing(true)
+                );
               }}
             >
               <span className="font-bold">{countFollowing}</span> following
@@ -174,7 +228,11 @@ const UserPage: React.FC = () => {
       {/* Story */}
       <div className="flex justify-start mx-[10px] gap-[15px]">
         <div className="flex flex-col justify-center items-center px-[15px]">
-          <UserAvatarStory haveSeenBefore={true} size={77} url={userInfor?.avatar!} />
+          <UserAvatarStory
+            haveSeenBefore={true}
+            size={77}
+            url={userInfor?.avatar!}
+          />
           <p
             className="text-ellipsis overflow-hidden max-w-[74px] text-xs pt-[6px] px-[2px]"
             style={{ color: false ? "#8e8e8e" : "black" }}
@@ -183,7 +241,11 @@ const UserPage: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col justify-center items-center px-[15px]">
-          <UserAvatarStory haveSeenBefore={true} size={77} url={userInfor?.avatar!} />
+          <UserAvatarStory
+            haveSeenBefore={true}
+            size={77}
+            url={userInfor?.avatar!}
+          />
           <p
             className="text-ellipsis overflow-hidden max-w-[74px] text-xs pt-[6px] px-[2px]"
             style={{ color: false ? "#8e8e8e" : "black" }}
@@ -206,6 +268,10 @@ const UserPage: React.FC = () => {
             <IconTagged /> TAGGED
           </li>
         </ul>
+
+        <div>
+          <audio controls src={audioUrl}></audio>
+        </div>
       </div>
 
       {/* Modal */}

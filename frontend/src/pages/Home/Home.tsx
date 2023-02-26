@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 import { listPosts } from "../../common/data/listPosts";
 import ButtonLink from "../../components/ButtonLink";
@@ -10,6 +11,7 @@ import styles from "./styles.module.css";
 
 const Home: React.FC = () => {
   const userAuth = useAppSelector((state) => state.auth.authUser);
+
   console.log("🚀 ~ file: Home.tsx:9 ~ userAuth", userAuth);
   return (
     <div
@@ -41,7 +43,9 @@ const Home: React.FC = () => {
           }
         />
         <div className="flex flex-row justify-between">
-          <p className="font-bold text-secondary-text text-[14px]">Suggestions For You</p>
+          <p className="font-bold text-secondary-text text-[14px]">
+            Suggestions For You
+          </p>
           <button className="text-xs font-bold">See All</button>
         </div>
 

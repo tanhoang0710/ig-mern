@@ -14,15 +14,17 @@ const cookieSession = require('cookie-session');
 const userRouter = require('./routes/userRoutes');
 const followRouter = require('./routes/followRoutes');
 const postRouter = require('./routes/postRoutes');
+const storyRouter = require('./routes/storyRoutes');
 
 const app = express();
 
 // 1) Global Middleware
-// Serving static file
-app.use(express.static(path.join(__dirname, 'public')));
 
 // CORS
 app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+// app.use(cors({ origin: '*', credentials: true }));
+// Serving static file
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set security HTTP headers
 app.use(helmet());
@@ -72,6 +74,7 @@ app.use(passport.session());
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/follow', followRouter);
 app.use('/api/v1/post', postRouter);
+app.use('/api/v1/story', storyRouter);
 
 app.all('*', (req, res, next) => {
     console.log(`Can't find ${req.originalUrl} on this server`);
