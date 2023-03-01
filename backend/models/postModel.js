@@ -19,6 +19,7 @@ const postSchema = new mongoose.Schema(
                 ref: 'User',
             },
         ],
+        active: Boolean,
         caption: String,
         // tagged_user: [
         //     {

@@ -11,6 +11,7 @@ const storySchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Music',
     },
+    active: Boolean,
     createdAt: {
         type: Date,
         default: Date.now(),

@@ -7,6 +7,7 @@ const {
     loginWithGoogle,
     loginWithGithub,
     isAuthenticated,
+    logout,
 } = require('../controllers/authController');
 const { getAllUsers, getAUser } = require('../controllers/userController');
 
@@ -34,9 +35,7 @@ router.get(
 );
 router.get('/github/callback', loginWithGithub);
 
-// router.get('/logout', (req, res) => {
-//   req.logout()
-// })
+router.post('/logout', logout);
 
 router.route('/').get(isAuthenticated, getAllUsers);
 router.route('/:username').get(isAuthenticated, getAUser);

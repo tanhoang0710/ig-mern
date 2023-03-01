@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import IconCreate from "../../components/Icon/IconCreate";
 import IconCreateActive from "../../components/Icon/IconCreateActive";
 import IconExplore from "../../components/Icon/IconExplore";
@@ -20,6 +20,7 @@ import IconMenu from "../../components/Icon/IconMenu";
 import IconMenuActive from "../../components/Icon/IconMenuActive";
 import styles from "./styles.module.css";
 import { useAppSelector } from "../../store/hooks";
+import axios from "axios";
 
 interface IProps {
   tabActive: string;
@@ -28,6 +29,22 @@ interface IProps {
 
 const SideBar: React.FC<IProps> = ({ tabActive, onClickTab }) => {
   const userAuth = useAppSelector((state) => state.auth.authUser);
+
+  const [isOpenMore, setIsOpenMore] = useState<boolean>(false);
+
+  const handleLogout = async () => {
+    const data = await axios.post(
+      "http://localhost:3000/api/v1/users/logout",
+      undefined,
+      {
+        withCredentials: true,
+      }
+    );
+
+    if (data.data?.status === "success") {
+      window.location.reload();
+    }
+  };
 
   return (
     <div className={`${styles.sidebar}`}>
@@ -85,21 +102,33 @@ const SideBar: React.FC<IProps> = ({ tabActive, onClickTab }) => {
           onClick={() => onClickTab("create")}
         />
         <NavItem
-          icon={<MenuAvatar url={userAuth?.avatar as string} isActive={false} />}
-          activeIcon={<MenuAvatar url={userAuth?.avatar as string} isActive={true} />}
+          icon={
+            <MenuAvatar url={userAuth?.avatar as string} isActive={false} />
+          }
+          activeIcon={
+            <MenuAvatar url={userAuth?.avatar as string} isActive={true} />
+          }
           title={"Profile"}
           isActive={tabActive === "profile"}
           onClick={() => onClickTab("profile")}
         />
       </div>
-      <div className="mb-6">
+      <div className="mb-6 relative select-none">
         <NavItem
           icon={<IconMenu />}
           activeIcon={<IconMenuActive />}
           title={"More"}
           isActive={tabActive === "more"}
-          onClick={() => onClickTab("more")}
+          onClick={() => setIsOpenMore(!isOpenMore)}
         />
+        {isOpenMore && (
+          <div
+            className={`cursor-pointer select-none absolute top-[-30px] left-0 px-4 py-2 w-[200px] rounded-[6px] bg-white ${styles.boxShadow}`}
+            onClick={handleLogout}
+          >
+            Logout
+          </div>
+        )}
       </div>
     </div>
   );

@@ -116,3 +116,17 @@ exports.isAuthenticated = async (req, res, next) => {
         message: 'You are not logged in! Please login to get access.',
     });
 };
+
+exports.logout = (req, res) => {
+    // cho dang nhap vs jwt bth
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now() + 100 * 1000),
+        httpOnly: true,
+    });
+    // cho dang nhap vs social
+    req.logout();
+    res.status(200).json({
+        status: 'success',
+        message: 'Logout successfully!',
+    });
+};
