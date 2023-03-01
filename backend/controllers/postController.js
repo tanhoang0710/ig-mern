@@ -69,3 +69,19 @@ exports.uploadPost = async (req, res) => {
         message: 'Some thing went wrong!',
     });
 };
+
+exports.deletePost = async (req, res) => {
+    const { id } = req.params;
+    const post = await Post.findById(id);
+    if (!post)
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No post found with that ID',
+        });
+    await Post.findByIdAndUpdate(id, { active: false });
+
+    res.status(204).json({
+        status: 'success',
+        data: null,
+    });
+};

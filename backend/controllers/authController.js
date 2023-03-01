@@ -116,3 +116,13 @@ exports.isAuthenticated = async (req, res, next) => {
         message: 'You are not logged in! Please login to get access.',
     });
 };
+
+exports.logout = (req, res) => {
+    if (req.user) {
+        req.logout();
+        res.status(200).json({
+            status: 'success',
+            message: 'Logout successfully!',
+        });
+    }
+};

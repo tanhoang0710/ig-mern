@@ -1,7 +1,9 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const Music = require('../models/MusicModel');
-const Story = require('../models/StoryModel');
+const Music = require('../models/musicModel');
+const Story = require('../models/storyModel');
+const StoryReaction = require('../models/storyReactionModel');
+const StoryViewer = require('../models/storyViewerModel');
 
 const multerStorage = multer.memoryStorage();
 
@@ -77,3 +79,90 @@ exports.postAStory = async (req, res) => {
         console.log(error);
     }
 };
+
+exports.viewAStory = async (req, res) => {
+    const { id } = req.params;
+    const story = await Story.findById(id);
+    if (!story)
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No story found with that ID',
+        });
+    const result = await StoryViewer.create({
+        user: req.user._id,
+        story: id,
+    });
+    if (result)
+        return res.status(201).json({
+            status: 'success',
+            result,
+        });
+
+    res.status(400).json({
+        status: 'fail',
+        message: 'Something went wrong!',
+    });
+};
+
+// Reaction stories
+exports.reactAStory = async (req, res) => {
+    const { id } = req.params;
+    const { type } = req.body;
+    console.log(
+        '🚀 ~ file: storyController.js:134 ~ exports.reactAStory= ~ type:',
+        type
+    );
+    const story = await Story.findById(id);
+    if (!story)
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No story found with that ID',
+        });
+    try {
+        const result = await StoryReaction.create({
+            user: req.user._id,
+            story: id,
+            type,
+        });
+        if (result)
+            return res.status(201).json({
+                status: 'success',
+                result,
+            });
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            message: error.message,
+        });
+    }
+
+    res.status(400).json({
+        status: 'fail',
+        message: 'Something went wrong!',
+    });
+};
+
+// Xoa stories (soft delete)
+exports.deleteAStory = async (req, res) => {
+    const { id } = req.params;
+    const story = await Story.findById(id);
+    if (!story)
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No story found with that ID',
+        });
+    await Story.findByIdAndUpdate(id, { active: false });
+
+    res.status(204).json({
+        status: 'success',
+        data: null,
+    });
+};
+// Get Story tu acc ma minh da follow
+// Check xem xem hay chua
+// Get post từ những người đã follow pageable
+// Thay đổi thông tin
+// Quên mật khẩu, đổi mật khẩu
+// Comment post, like post
+// Suggested account
+// Đăng xuất
