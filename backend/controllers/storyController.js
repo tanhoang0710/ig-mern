@@ -161,8 +161,6 @@ exports.deleteAStory = async (req, res) => {
 // Get Story tu acc ma minh da follow
 // Check xem xem hay chua
 // Get post từ những người đã follow pageable
-// Thay đổi thông tin
-// Quên mật khẩu, đổi mật khẩu
+// Quên mật khẩu
 // Comment post, like post
 // Suggested account
-// Đăng xuất

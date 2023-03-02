@@ -9,7 +9,14 @@ const {
     isAuthenticated,
     logout,
 } = require('../controllers/authController');
-const { getAllUsers, getAUser } = require('../controllers/userController');
+const {
+    getAllUsers,
+    getAUser,
+    updateProfile,
+    resizeImages,
+    multerConfig,
+    updatePassword,
+} = require('../controllers/userController');
 
 const router = express.Router();
 const passport = require('passport');
@@ -38,6 +45,11 @@ router.get('/github/callback', loginWithGithub);
 router.post('/logout', logout);
 
 router.route('/').get(isAuthenticated, getAllUsers);
+router
+    .route('/update-me')
+    .patch(isAuthenticated, multerConfig, resizeImages, updateProfile);
+
+router.route('/update-password').patch(isAuthenticated, updatePassword);
 router.route('/:username').get(isAuthenticated, getAUser);
 
 module.exports = router;

@@ -99,7 +99,6 @@ exports.isAuthenticated = async (req, res, next) => {
     if (req.user) return next();
     if (req.cookies.jwt) {
         const decoded = jwt.decode(req.cookies.jwt, process.env.JWT_SECRET);
-        console.log(decoded);
         const currentUser = await User.findById(decoded.id);
         if (!currentUser) {
             return res.status(401).json({

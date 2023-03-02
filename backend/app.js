@@ -84,7 +84,11 @@ app.all('*', (req, res, next) => {
 
 // express tu biet day la error handling middleware, vi là middleware 4 tham số
 app.use((err, req, res, next) => {
-    console.log(err);
+    // console.log(err);
+    return res.status(400).json({
+        status: 'fail',
+        message: err.message,
+    });
 });
 
 module.exports = app;
