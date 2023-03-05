@@ -1,8 +1,10 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const Users = require('../models/userModel');
 const Follow = require('../models/followModel');
 const multer = require('multer');
 const sharp = require('sharp');
+const sendEmail = require('../utils/email');
 
 exports.getAllUsers = async (req, res) => {
     console.log(
@@ -167,5 +169,96 @@ exports.updatePassword = async (req, res) => {
     res.status(200).json({
         status: 'success',
         user,
+    });
+};
+
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    const user = await Users.findOne({ email });
+    if (!user) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No users found with that email!',
+        });
+    }
+
+    const resetPasswordToken = user.createPasswordResetToken();
+
+    await user.save({
+        validateBeforeSave: false,
+    });
+
+    const resetURL = `${req.protocol}://${req.get(
+        'host'
+    )}/api/v1/users/reset-password/${resetPasswordToken}`;
+
+    const message = `Forgot your password? Submit a PATCH request with your new password and password confirm to: ${resetURL}.\nIf you didn't forget your password, please ignore this email.`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Your password reset token (valid for 10 mins)',
+            message,
+        });
+    } catch (error) {
+        user.passwordResetToken = undefined;
+        user.passwordResetExpires = undefined;
+
+        await user.save({ validateBeforeSave: false });
+
+        return res.status(500).json({
+            status: 'fail',
+            message: 'There was an error sending email. Try again later!',
+        });
+    }
+
+    return res.status(200).json({
+        status: 'success',
+        message: 'Token sent to your email!',
+    });
+};
+
+exports.resetPassword = async (req, res) => {
+    const { resetPasswordToken } = req.params;
+    const { newPassword, newPasswordConfirm } = req.body;
+
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(resetPasswordToken)
+        .digest('hex');
+
+    // Tìm user có token reset và chưa hết hạn
+    const user = await Users.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: {
+            $gt: Date.now(),
+        },
+    });
+
+    if (!user) {
+        return res.status(400).json({
+            status: 'fail',
+            message: 'Token is invalid or has expired!',
+        });
+    }
+
+    if (newPassword !== newPasswordConfirm) {
+        return res.status(400).json({
+            status: 'fail',
+            message: 'New password and new password confirm must be equal!',
+        });
+    }
+
+    user.password = newPassword;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+
+    // Cập nhật passwordChangedAt
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Your password is updated successfully!',
     });
 };

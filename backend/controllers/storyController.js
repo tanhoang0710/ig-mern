@@ -1,6 +1,7 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const Music = require('../models/musicModel');
+const Follow = require('../models/followModel');
 const Story = require('../models/storyModel');
 const StoryReaction = require('../models/storyReactionModel');
 const StoryViewer = require('../models/storyViewerModel');
@@ -159,6 +160,36 @@ exports.deleteAStory = async (req, res) => {
     });
 };
 // Get Story tu acc ma minh da follow
+exports.getStories = async (req, res) => {
+    const { page, limit } = req.query;
+    const { _id } = req.user;
+
+    const skip = (page - 1) * limit;
+
+    // Lay ra nhung nguoi ma minh follow
+
+    const [total, listFollowingUsers] = await Promise.all([
+        Follow.find({
+            follower: _id,
+        }).count(),
+        Follow.find({
+            follower: _id,
+        })
+            .skip(skip)
+            .limit(limit),
+    ]);
+
+    // lay stories cua nhung nguoi do\
+    const [stories] = await Promise.all(
+        listFollowingUsers.map(async (user) => await Story.find({ user }))
+    );
+
+    res.status(200).json({
+        status: 'success',
+        stories,
+        total,
+    });
+};
 // Check xem xem hay chua
 // Get post từ những người đã follow pageable
 // Quên mật khẩu

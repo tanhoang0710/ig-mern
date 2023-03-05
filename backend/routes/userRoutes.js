@@ -16,6 +16,8 @@ const {
     resizeImages,
     multerConfig,
     updatePassword,
+    forgotPassword,
+    resetPassword,
 } = require('../controllers/userController');
 
 const router = express.Router();
@@ -51,5 +53,7 @@ router
 
 router.route('/update-password').patch(isAuthenticated, updatePassword);
 router.route('/:username').get(isAuthenticated, getAUser);
+router.route('/forgot-password').post(forgotPassword);
+router.route('/reset-password/:resetPasswordToken').patch(resetPassword);
 
 module.exports = router;

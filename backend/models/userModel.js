@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
@@ -73,6 +74,7 @@ const userSchema = new mongoose.Schema({
     },
 });
 
+// Chaỵ ngay trước khi a document đc save
 userSchema.pre('save', async function (next) {
     // Only run this function if password was actually modified
     if (!this.isModified('password')) return next();
@@ -81,6 +83,29 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 12);
     next();
 });
+
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password') || this.isNew) return next();
+
+    // Trừ 1s vì có lúc lưu vào DB sẽ chậm hơn lúc đổi mật khẩu
+    // phòng nếu trường hợp check login mà có check changePasswordAfter thì sẽ ko đăng nhập đc
+    // vì thời gian đổi mật khẩu sẽ sau thời thời gian của jwt
+    this.passwordChangedAt = Date.now() - 1000;
+    next();
+});
+
+userSchema.methods.createPasswordResetToken = function () {
+    // Tạo ra password reset token nhưng khi lưu vào db cần mã hóa và có thời gian hết hạn
+    const resetPasswordToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetPasswordToken)
+        .digest('hex');
+    this.passwordResetExpires = Date.now() + 10 * 60 * 10000;
+
+    return resetPasswordToken;
+};
 
 userSchema.plugin(findOrCreate);
 
