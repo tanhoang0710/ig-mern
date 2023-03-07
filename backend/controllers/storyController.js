@@ -27,8 +27,9 @@ exports.resizeImages = async (req, res, next) => {
             message: 'No user found with that ID!',
         });
     // if (!req.files) return next();
-    console.log(req.files.image[0].originalname);
+    // console.log(req.files);
     // req.body.image = [];
+
     req.body.image = `storyImg-${req.user._id}-${Date.now()}-${
         req.files?.image[0]?.originalname.split('.')[0]
     }.jpeg`;
@@ -159,39 +160,39 @@ exports.deleteAStory = async (req, res) => {
         data: null,
     });
 };
-// Get Story tu acc ma minh da follow
+// Get Story tu acc ma minh da follow và chưa expired
 exports.getStories = async (req, res) => {
     const { page, limit } = req.query;
     const { _id } = req.user;
 
     const skip = (page - 1) * limit;
-
-    // Lay ra nhung nguoi ma minh follow
-
-    const [total, listFollowingUsers] = await Promise.all([
-        Follow.find({
-            follower: _id,
-        }).count(),
-        Follow.find({
-            follower: _id,
-        })
-            .skip(skip)
-            .limit(limit),
-    ]);
-
-    // lay stories cua nhung nguoi do\
-    const [stories] = await Promise.all(
-        listFollowingUsers.map(async (user) => await Story.find({ user }))
+    const now = new Date(Date.now());
+    console.log(
+        '🚀 ~ file: storyController.js:170 ~ exports.getStories= ~ now:',
+        now
     );
+    // Lấy ra những người mà mình follow
+    const listFollowing = await Follow.find({
+        follower: _id,
+    });
+
+    const listFollowingID = listFollowing.map((ele) => ele.followee);
+
+    // Lấy ra 10 stories chưa expired và thuộc những người mình follow
+    const stories = await Story.find({
+        expiredIn: { $gt: now },
+        user: { $in: listFollowingID },
+    })
+        .skip(skip)
+        .limit(limit)
+        .populate('user', 'username avatar');
 
     res.status(200).json({
         status: 'success',
         stories,
-        total,
     });
 };
 // Check xem xem hay chua
 // Get post từ những người đã follow pageable
-// Quên mật khẩu
 // Comment post, like post
 // Suggested account

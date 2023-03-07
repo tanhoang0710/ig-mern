@@ -4,7 +4,7 @@ const storyViewerSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: [true, 'A post must belong to a user'],
+        required: [true, 'A story view must belong to a user'],
     },
     story: {
         type: mongoose.Schema.ObjectId,
