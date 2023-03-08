@@ -5,14 +5,20 @@ const {
     resizeImages,
     multerConfig,
     deletePost,
+    getPostFromFollowingUsers,
+    likeAPost,
+    getLikesOfAPost,
 } = require('../controllers/postController');
 
 const router = express.Router();
 
 router.use(isAuthenticated);
 
-router.route('/').post(multerConfig, resizeImages, uploadPost);
+router
+    .route('/')
+    .get(getPostFromFollowingUsers)
+    .post(multerConfig, resizeImages, uploadPost);
 
-router.route('/:id').delete(deletePost);
+router.route('/:id').get(getLikesOfAPost).patch(likeAPost).delete(deletePost);
 
 module.exports = router;
