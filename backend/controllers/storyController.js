@@ -180,19 +180,29 @@ exports.getStories = async (req, res) => {
 
     // Lấy ra 10 stories chưa expired và thuộc những người mình follow
     const stories = await Story.find({
-        expiredIn: { $gt: now },
+        // expiredIn: { $gt: now },
         user: { $in: listFollowingID },
     })
         .skip(skip)
         .limit(limit)
         .populate('user', 'username avatar');
 
+    const storiesWithCheckViewByUser = await Promise.all(
+        stories.map(async (story) => {
+            const checkviewByUser = await StoryViewer.findOne({
+                story: story._id,
+                user: _id,
+            });
+
+            const viewedByUser = checkviewByUser ? true : false;
+            return { ...story.toObject(), viewedByUser };
+        })
+    );
+
     res.status(200).json({
         status: 'success',
-        stories,
+        storiesWithCheckViewByUser,
     });
 };
-// Check xem xem hay chua
-// Get post từ những người đã follow pageable
 // Comment post, like post
 // Suggested account
