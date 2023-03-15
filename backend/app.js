@@ -10,14 +10,27 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const passport = require('passport');
 const cookieSession = require('cookie-session');
+const swaggerUI = require('swagger-ui-express');
+const swaggerJsDoc = require('swagger-jsdoc');
 
 const userRouter = require('./routes/userRoutes');
 const followRouter = require('./routes/followRoutes');
 const postRouter = require('./routes/postRoutes');
 const storyRouter = require('./routes/storyRoutes');
 const storyHighlightRouter = require('./routes/storyHighlightRoutes');
+const swaggerDef = require('./docs/swaggerDef');
+
+// Swagger
+const specs = swaggerJsDoc(swaggerDef);
 
 const app = express();
+app.use(
+    '/api/v1/api-docs',
+    swaggerUI.serve,
+    swaggerUI.setup(specs, {
+        explorer: true,
+    })
+);
 
 // 1) Global Middleware
 
