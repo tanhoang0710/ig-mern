@@ -11,11 +11,11 @@ const swaggerDef = {
         },
         servers: [
             {
-                url: `http://localhost:${process.env.PORT}`,
+                url: `http://localhost:${process.env.PORT}/api/v1`,
             },
         ],
     },
-    apis: ['../routes/*.js'],
+    apis: ['docs/*.yml', 'routes/*.js'],
 };
 
 module.exports = swaggerDef;

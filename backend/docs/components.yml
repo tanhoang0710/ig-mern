@@ -1,0 +1,66 @@
+components:
+    schemas:
+        Auth:
+        Login:
+            type: object
+            properties:
+                status:
+                    type: string
+                token:
+                    type: string
+                user:
+                    type: object
+                    properties:
+                        _id:
+                            type: string
+                        fullname:
+                            type: string
+                        email:
+                            type: string
+                        username:
+                            type: string
+                        avatar:
+                            type: string
+
+            example:
+                status: success
+                token: dsnjasdnfaksnmxcnvokjqpi
+                user:
+                    _id: 6412dc74b941b7a5f75f68d0
+                    fullname: fullname
+                    email: your_email@gmail.com
+                    username: username
+                    avatar: avatar
+        User:
+            type: object
+            properties:
+                status:
+                    type: string
+                user:
+                    type: object
+                    properties:
+                        _id:
+                            type: string
+                        fullname:
+                            type: string
+                        email:
+                            type: string
+                        username:
+                            type: string
+                        avatar:
+                            type: string
+    responses:
+        DuplicateUsername:
+            description: Username is existed!
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            status:
+                                type: string
+                            message:
+                                type: string
+                    example:
+                        status: fail
+                        message: Username is existed!

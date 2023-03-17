@@ -31,17 +31,25 @@ exports.signup = async (req, res) => {
             '🚀 ~ file: authController.js:39 ~ exports.signup= ~ error',
             error
         );
-        res.status(500).json(
-            error.code === 11000 ? 'Username is existed!' : error
-        );
+        res.status(400).json({
+            status: 'fail',
+            message:
+                error.code === 11000 ? 'Username is existed!' : error.message,
+        });
     }
 };
 
 exports.signin = async (req, res, next) => {
     passport.authenticate('local', (err, user) => {
-        if (err) return res.status(500).json(err);
-        if (!user) {
-            return res.status(404).json(err.message);
+        if (err) {
+            if (err.message === 'Username or password is invalid')
+                return res.status(400).json({
+                    status: 'fail',
+                    message: err.message,
+                });
+            return res
+                .status(404)
+                .json({ status: 'fail', message: err.message });
         }
         const token = signToken(user._id);
         const cookieOptions = {
