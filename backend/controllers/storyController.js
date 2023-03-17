@@ -164,6 +164,11 @@ exports.reactAStory = async (req, res) => {
 exports.deleteAStory = async (req, res) => {
     const { id } = req.params;
     const story = await Story.findById(id);
+    if (!story.user.equals(req.user._id))
+        return res.status(403).json({
+            status: 'fail',
+            message: `You're not the author of this story!`,
+        });
     if (!story)
         return res.status(404).json({
             status: 'fail',

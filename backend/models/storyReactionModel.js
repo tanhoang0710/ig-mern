@@ -18,7 +18,7 @@ const storyReactionSchema = new mongoose.Schema({
             // enum chi dung voi string
             values: ['like', 'love', 'care', 'haha', 'wow', 'sad', 'angry'],
             message:
-                'Difficulty is either: like, love, care, haha, wow, sad, angry!',
+                'Reaction is either: like, love, care, haha, wow, sad, angry!',
         },
     },
 });
