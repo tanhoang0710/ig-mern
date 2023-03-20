@@ -175,3 +175,30 @@ exports.getLikesOfAPost = async (req, res) => {
         });
     }
 };
+
+exports.unlikePost = async (req, res) => {
+    const { _id } = req.user;
+    const { id } = req.params;
+
+    const post = await Post.findById(id);
+    if (!post)
+        return res.status(404).json({
+            status: 'fail',
+            message: 'No post found with that ID!',
+        });
+    post.liked_by = post.liked_by.filter((item) => !item.equals(_id));
+    try {
+        await post.save({
+            validateBeforeSave: false,
+        });
+        return res.status(200).json({
+            status: 'success',
+            message: 'Unlike a post successfully!',
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            message: error.message,
+        });
+    }
+};

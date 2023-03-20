@@ -13,6 +13,9 @@ const swaggerDef = {
             {
                 url: `http://localhost:${process.env.PORT}/api/v1`,
             },
+            {
+                url: `http://192.168.1.17:${process.env.PORT}/api/v1`,
+            },
         ],
     },
     apis: ['docs/*.yml', 'routes/*.js'],

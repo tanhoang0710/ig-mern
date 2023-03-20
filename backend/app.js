@@ -35,7 +35,12 @@ app.use(
 // 1) Global Middleware
 
 // CORS
-app.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
+app.use(
+    cors({
+        credentials: true,
+        origin: ['http://localhost:5173', 'http://192.168.1.17:5173'],
+    })
+);
 // app.use(cors({ origin: '*', credentials: true }));
 // Serving static file
 app.use(express.static(path.join(__dirname, 'public')));

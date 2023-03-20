@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-mongoose.set('strictQuery', false)
+mongoose.set('strictQuery', false);
 
 process.on('uncaughtException', (err) => {
     console.log('UNCAUGHT EXCEPTION! Shutting down');
@@ -27,10 +27,14 @@ mongoose
     })
     .then(() => {
         console.log('DB connection successful!');
-    }).catch(err => console.log(err));
+    })
+    .catch((err) => console.log(err));
 
 // 4) Start server
 const port = process.env.PORT || 3000;
+// const server = app.listen(port, '192.168.1.17', () => {
+//     console.log(`App running on port ${port}...`);
+// });
 const server = app.listen(port, () => {
     console.log(`App running on port ${port}...`);
 });
