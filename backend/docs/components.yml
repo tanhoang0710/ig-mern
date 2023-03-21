@@ -101,6 +101,38 @@ components:
                                         type: string
                                     image:
                                         type: string
+        Comment:
+            type: object
+            properties:
+                _id:
+                    type: string
+                user:
+                    type: object
+                    properties:
+                        _id:
+                            type: string
+                        username:
+                            type: string
+                        avatar:
+                            type: string
+                post:
+                    type: string
+                content:
+                    type: string
+                liked_by:
+                    type: array
+                    items:
+                        type: string
+                parentID:
+                    type: string
+                createdAt:
+                    type: string
+                    format: Date
+                updatedAt:
+                    type: string
+                    format: Date
+                __v:
+                    type: integer
 
     responses:
         DuplicateUsername:

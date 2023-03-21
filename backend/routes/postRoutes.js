@@ -1,5 +1,6 @@
 const express = require('express');
 const { isAuthenticated } = require('../controllers/authController');
+const { getCommentOfAPost } = require('../controllers/commentController');
 const {
     uploadPost,
     resizeImages,
@@ -130,6 +131,50 @@ router
     .route('/')
     .get(getPostFromFollowingUsers)
     .post(multerConfig, resizeImages, uploadPost);
+
+/**
+ * @swagger
+ * /post/{id}/comments:
+ *   get:
+ *     summary: Get root comments of a post pageable
+ *     tags: [Post]
+ *     parameters:
+ *      - in: path
+ *        required: true
+ *        name: id
+ *        schema:
+ *          type: string
+ *      - in: query
+ *        required: true
+ *        name: page
+ *        schema:
+ *          type: string
+ *      - in: query
+ *        required: true
+ *        name: limit
+ *        schema:
+ *          type: string
+ *     responses:
+ *       200:
+ *         description: OK!
+ *         content:
+ *           application/json:
+ *             schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                      type: string
+ *                  total:
+ *                      type: integer
+ *                  totalPages:
+ *                      type: integer
+ *                  comments:
+ *                      type: array
+ *                      items:
+ *                          $ref: '#/components/schemas/Comment'
+ */
+
+router.route('/:id/comments').get(getCommentOfAPost);
 
 /**
  * @swagger
