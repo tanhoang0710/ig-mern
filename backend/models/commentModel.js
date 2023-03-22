@@ -19,12 +19,10 @@ const commentSchema = new mongoose.Schema(
                 ref: 'User',
             },
         ],
-        parentID: [
-            {
-                type: mongoose.Schema.ObjectId,
-                ref: 'Comment',
-            },
-        ],
+        parentID: {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Comment',
+        },
     },
     { timestamps: true }
 );
