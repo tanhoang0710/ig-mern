@@ -23,6 +23,7 @@ const commentSchema = new mongoose.Schema(
             type: mongoose.Schema.ObjectId,
             ref: 'Comment',
         },
+        active: Boolean,
     },
     { timestamps: true }
 );

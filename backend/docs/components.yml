@@ -131,6 +131,8 @@ components:
                 updatedAt:
                     type: string
                     format: Date
+                active:
+                    type: boolean
                 __v:
                     type: integer
 

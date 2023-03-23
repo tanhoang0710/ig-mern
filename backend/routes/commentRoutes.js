@@ -5,6 +5,8 @@ const {
     getReplyComment,
     likeAComment,
     unlikeAComment,
+    deleteComment,
+    editComment,
 } = require('../controllers/commentController');
 
 const router = express.Router();
@@ -142,6 +144,75 @@ router.route('/:id/like').patch(likeAComment).delete(unlikeAComment);
  *                      type: array
  *                      items:
  *                          $ref: '#/components/schemas/Comment'
+ *   delete:
+ *     summary: Delete A Comment
+ *     tags: [Comment]
+ *     parameters:
+ *      - in: path
+ *        required: true
+ *        name: id
+ *        schema:
+ *          type: string
+ *     responses:
+ *       200:
+ *         description: OK!
+ *         content:
+ *           application/json:
+ *             schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                      type: string
+ *                  total:
+ *                      type: integer
+ *                  totalPages:
+ *                      type: integer
+ *                  comments:
+ *                      type: array
+ *                      items:
+ *                          $ref: '#/components/schemas/Comment'
+ *   patch:
+ *     summary: Edit A Comment
+ *     tags: [Comment]
+ *     parameters:
+ *      - in: path
+ *        required: true
+ *        name: id
+ *        schema:
+ *          type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *          application/json:
+ *              schema:
+ *                  type: object
+ *                  required:
+ *                      - content
+ *                  properties:
+ *                      content:
+ *                          type: string
+ *     responses:
+ *       200:
+ *         description: OK!
+ *         content:
+ *           application/json:
+ *             schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                      type: string
+ *                  total:
+ *                      type: integer
+ *                  totalPages:
+ *                      type: integer
+ *                  comments:
+ *                      type: array
+ *                      items:
+ *                          $ref: '#/components/schemas/Comment'
  */
-router.route('/:id').get(getReplyComment);
+router
+    .route('/:id')
+    .get(getReplyComment)
+    .delete(deleteComment)
+    .patch(editComment);
 module.exports = router;

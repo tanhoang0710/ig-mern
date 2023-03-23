@@ -13,6 +13,7 @@ exports.getCommentOfAPost = async (req, res) => {
                 $match: {
                     post: mongoose.Types.ObjectId(id),
                     parentID: null,
+                    // active: true,
                 },
             },
             {
@@ -88,6 +89,7 @@ exports.getReplyComment = async (req, res) => {
             {
                 $match: {
                     parentID: mongoose.Types.ObjectId(id),
+                    // active: true,
                 },
             },
             {
@@ -179,4 +181,55 @@ exports.unlikeAComment = async (req, res) => {
     }
 };
 // delete comment
+exports.deleteComment = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const comment = await Comment.findById(id);
+        if (!comment)
+            return res.status(404).json({
+                status: 'fail',
+                message: 'No comment found with that ID!',
+            });
+        comment.active = false;
+        await comment.save({
+            validateBeforeSave: false,
+        });
+        return res.status(200).json({
+            status: 'success',
+            comment,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'fail',
+            message: error.message,
+        });
+    }
+};
 // sua comment
+exports.editComment = async (req, res) => {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    try {
+        const comment = await Comment.findById(id);
+        if (!comment)
+            return res.status(404).json({
+                status: 'fail',
+                message: 'No comment found with that ID!',
+            });
+        comment.content = content;
+        await comment.save({
+            validateBeforeSave: false,
+        });
+        return res.status(200).json({
+            status: 'success',
+            comment,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'fail',
+            message: error.message,
+        });
+    }
+};
