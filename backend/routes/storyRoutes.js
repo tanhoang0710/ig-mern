@@ -8,6 +8,7 @@ const {
     reactAStory,
     deleteAStory,
     getStories,
+    getStoryViewer,
 } = require('../controllers/storyController');
 
 const router = express.Router();
@@ -136,8 +137,46 @@ router.route('/').get(getStories).post(multerConfig, resizeImages, postAStory);
  *                          __v:
  *                              type: integer
  *
+ *   get:
+ *     summary: Get viewers of a story pageable
+ *     tags: [Story]
+ *     parameters:
+ *      - in: path
+ *        required: true
+ *        name: id
+ *        schema:
+ *          type: string
+ *      - in: query
+ *        required: true
+ *        name: page
+ *        schema:
+ *          type: string
+ *      - in: query
+ *        required: true
+ *        name: limit
+ *        schema:
+ *          type: string
+ *     responses:
+ *       200:
+ *         description: OK!
+ *         content:
+ *           application/json:
+ *             schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                      type: string
+ *                  total:
+ *                      type: integer
+ *                  totalPages:
+ *                      type: integer
+ *                  viewers:
+ *                      type: array
+ *                      items:
+ *                          $ref: '#/components/schemas/User'
+ *
  */
-router.route('/:id').post(viewAStory).delete(deleteAStory);
+router.route('/:id').get(getStoryViewer).post(viewAStory).delete(deleteAStory);
 
 /**
  * @swagger

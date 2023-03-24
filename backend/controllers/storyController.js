@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const multer = require('multer');
 const sharp = require('sharp');
 const Music = require('../models/musicModel');
@@ -95,6 +96,7 @@ exports.postAStory = async (req, res) => {
 };
 
 exports.viewAStory = async (req, res) => {
+    const { _id } = req.user;
     const { id } = req.params;
     const story = await Story.findById(id);
     if (!story)
@@ -102,20 +104,30 @@ exports.viewAStory = async (req, res) => {
             status: 'fail',
             message: 'No story found with that ID',
         });
-    const result = await StoryViewer.create({
-        user: req.user._id,
+    const checkView = await StoryViewer.find({
+        user: _id,
         story: id,
     });
-    if (result)
-        return res.status(201).json({
-            status: 'success',
-            result,
+    if (!checkView) {
+        const result = await StoryViewer.create({
+            user: req.user._id,
+            story: id,
         });
+        if (result)
+            return res.status(201).json({
+                status: 'success',
+                result,
+            });
 
-    res.status(400).json({
-        status: 'fail',
-        message: 'Something went wrong!',
-    });
+        res.status(400).json({
+            status: 'fail',
+            message: 'Something went wrong!',
+        });
+    } else {
+        return res.status(204).json({
+            message: 'success',
+        });
+    }
 };
 
 // Reaction stories
@@ -378,6 +390,75 @@ exports.deleteStoryFromHighlight = async (req, res) => {
         return res.status(404).json({
             status: 'fail',
             message: 'There is no story with that id in this highlight!',
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status: 'fail',
+            message: error.message,
+        });
+    }
+};
+
+exports.getStoryViewer = async (req, res) => {
+    const { id } = req.params;
+
+    const page = +req.query.page;
+    const limit = +req.query.limit;
+    const skip = (page - 1) * limit;
+    const story = await Story.findById(id);
+    if (!story) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'There is no story with that id!',
+        });
+    }
+    try {
+        const data = await StoryViewer.aggregate([
+            {
+                $match: {
+                    story: mongoose.Types.ObjectId(id),
+                    // active: true,
+                },
+            },
+            {
+                $facet: {
+                    total: [
+                        {
+                            $count: 'total',
+                        },
+                    ],
+                    viewers: [
+                        {
+                            $skip: skip,
+                        },
+                        {
+                            $limit: limit,
+                        },
+                    ],
+                },
+            },
+            {
+                $project: {
+                    total: 1,
+                    viewers: '$viewers.user',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'viewers',
+                    foreignField: '_id',
+                    as: 'viewers',
+                },
+            },
+        ]);
+        const totalPages = Math.ceil(data[0].total[0].total / limit);
+        // const viewers = data[0].viewers
+        return res.status(200).json({
+            status: 'success',
+            total: data[0].total[0].total,
+            totalPages,
+            viewers: data[0].viewers,
         });
     } catch (error) {
         return res.status(400).json({
