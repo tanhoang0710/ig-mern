@@ -135,7 +135,25 @@ components:
                     type: boolean
                 __v:
                     type: integer
-
+        Bluetick:
+            type: object
+            properties:
+                _id:
+                    type: string
+                user:
+                    type: string
+                status:
+                    type: string
+                verified:
+                    type: string
+                createdAt:
+                    type: string
+                    format: Date
+                updatedAt:
+                    type: string
+                    format: Date
+                __v:
+                    type: integer
     responses:
         DuplicateUsername:
             description: Username is existed!

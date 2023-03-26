@@ -9,7 +9,6 @@ const User = require('../models/userModel');
 
 passport.use(
     new LocalStrategy((username, password, done) => {
-        console.log('🚀 ~ file: passport.config.js:8 ~ password', password);
         User.findOne({ username }, async (err, user) => {
             if (err) {
                 return done(err);

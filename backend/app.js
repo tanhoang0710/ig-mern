@@ -19,6 +19,7 @@ const postRouter = require('./routes/postRoutes');
 const storyRouter = require('./routes/storyRoutes');
 const storyHighlightRouter = require('./routes/storyHighlightRoutes');
 const commentRouter = require('./routes/commentRoutes');
+const bluetickRouter = require('./routes/bluetickRoutes');
 const swaggerDef = require('./docs/swaggerDef');
 
 // Swagger
@@ -97,6 +98,7 @@ app.use('/api/v1/post', postRouter);
 app.use('/api/v1/story', storyRouter);
 app.use('/api/v1/story-highlight', storyHighlightRouter);
 app.use('/api/v1/comment', commentRouter);
+app.use('/api/v1/bluetick', bluetickRouter);
 
 app.all('*', (req, res, next) => {
     console.log(`Can't find ${req.originalUrl} on this server`);
