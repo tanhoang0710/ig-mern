@@ -5,6 +5,7 @@ const Follow = require('../models/followModel');
 const multer = require('multer');
 const sharp = require('sharp');
 const sendEmail = require('../utils/email');
+const Bluetick = require('../models/bluetickModel');
 
 exports.getAllUsers = async (req, res) => {
     console.log(
@@ -36,12 +37,17 @@ exports.getAUser = async (req, res) => {
             .populate('followee')
             .select('-follower -__v')
             .count();
+        const hasBluetick = await Bluetick.findOne({
+            user: user._id,
+            verified: true,
+        });
         return res.status(200).json({
             status: 'success',
             user: {
                 ...user.toObject(),
                 countFollowers,
                 countFollowing,
+                hasBluetick: hasBluetick ? true : false,
             },
         });
     }
