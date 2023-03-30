@@ -72,6 +72,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    emailVerified: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 // Chaỵ ngay trước khi a document đc save

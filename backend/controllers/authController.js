@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 const passport = require('../config/passport.config');
+const sendEmail = require('../utils/email');
 
 const signToken = (id) =>
     jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -9,10 +10,6 @@ const signToken = (id) =>
 
 exports.signup = async (req, res) => {
     const { email, username, fullname, password } = req.body;
-    console.log(
-        '🚀 ~ file: authController.js:21 ~ exports.signup= ~ req.body',
-        req.body
-    );
     try {
         const newUser = await User.create({
             username,
@@ -20,18 +17,23 @@ exports.signup = async (req, res) => {
             password,
             fullname,
         });
-        res.status(201).json({
+        await sendEmail({
+            email: newUser.email,
+            subject: 'Signin successfully!',
+            message: `Dear ${newUser.fullname}, thank you for using my app.\n\n
+            Login and using the following link to verify your email:\n\n
+            ${req.protocol}://${req.get('host')}/api/v1/users/verify-email \n\n
+            tanhun
+            `,
+        });
+        return res.status(201).json({
             status: 'success',
             data: {
                 newUser,
             },
         });
     } catch (error) {
-        console.log(
-            '🚀 ~ file: authController.js:39 ~ exports.signup= ~ error',
-            error
-        );
-        res.status(400).json({
+        return res.status(400).json({
             status: 'fail',
             message:
                 error.code === 11000 ? 'Username is existed!' : error.message,
@@ -136,6 +138,37 @@ exports.logout = (req, res) => {
         status: 'success',
         message: 'Logout successfully!',
     });
+};
+
+exports.verifyEmail = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).json({
+                status: 'fail',
+                message: 'No users found with that ID!',
+            });
+        }
+        user.emailVerified = true;
+        await user.save();
+        await sendEmail({
+            email: user.email,
+            subject: 'Verify email successfully!',
+            message: `Dear ${user.fullname}, thank you for using my app.
+            This email has been seen to inform that you verify your email successfully!\n\n
+            tanhun
+            `,
+        });
+        return res.status(200).json({
+            status: 'success',
+            user,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            message: error.message,
+        });
+    }
 };
 
 exports.retrictTo =

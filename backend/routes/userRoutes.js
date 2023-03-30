@@ -8,6 +8,7 @@ const {
     loginWithGithub,
     isAuthenticated,
     logout,
+    verifyEmail,
 } = require('../controllers/authController');
 const {
     getAllUsers,
@@ -382,4 +383,25 @@ router.route('/forgot-password').post(forgotPassword);
  */
 router.route('/reset-password/:resetPasswordToken').patch(resetPassword);
 
+/**
+ * @swagger
+ * /users/verify-email:
+ *   put:
+ *     summary: Verify Email
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: OK!
+ *         content:
+ *           application/json:
+ *             schema:
+ *                type: object
+ *                properties:
+ *                  status:
+ *                      type: string
+ *                  message:
+ *                      type: string
+ *
+ */
+router.route('/verify-email').put(isAuthenticated, verifyEmail);
 module.exports = router;
