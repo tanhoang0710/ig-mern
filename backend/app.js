@@ -58,7 +58,7 @@ if (process.env.NODE_ENV === 'development') {
 // Limit requests from same API
 const limiter = rateLimit({
     // max 100 requests each IP for 1 hour
-    max: 100000,
+    max: 10000,
     windowMs: 60 * 60 * 1000,
     message: 'Too many request from this IP, please try again in an hour',
 });
@@ -102,7 +102,6 @@ app.use('/api/v1/bluetick', bluetickRouter);
 
 app.all('*', (req, res, next) => {
     console.log(`Can't find ${req.originalUrl} on this server`);
-
     next();
 });
 
