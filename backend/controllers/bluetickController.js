@@ -12,7 +12,7 @@ exports.getAllRequest = async (req, res) => {
             blueticks,
         });
     } catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             status: 'fail',
             message: error.message,
         });
@@ -32,7 +32,7 @@ exports.requestBlueTick = async (req, res) => {
             bluetick,
         });
     } catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             status: 'fail',
             message: error.message,
         });
@@ -63,12 +63,12 @@ exports.verifyBluetick = async (req, res) => {
             subject: 'Bluetick accepted',
             message: `Dear ${user.fullname}, your account has been reviewed and accepted for bluetick.\n\nThank you for using my app.\n\ntanhun`,
         });
-        res.status(200).json({
+        return res.status(200).json({
             message: 'success',
             bluetick,
         });
     } catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             status: 'fail',
             message: error.message,
         });
@@ -100,12 +100,12 @@ exports.rejectBluetick = async (req, res) => {
             subject: 'Bluetick rejected',
             message: `Dear ${user.fullname}, your account has been reviewed and seem to be not accepted for bluetick.\n\nThank you for using my app.\n\ntanhun`,
         });
-        res.status(200).json({
+        return res.status(200).json({
             message: 'success',
             bluetick,
         });
     } catch (error) {
-        res.status(400).json({
+        return res.status(400).json({
             status: 'fail',
             message: error.message,
         });

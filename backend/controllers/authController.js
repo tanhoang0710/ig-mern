@@ -106,24 +106,31 @@ exports.loginWithGithub = passport.authenticate('github', {
 });
 
 exports.isAuthenticated = async (req, res, next) => {
-    if (req.user) return next();
-    if (req.cookies.jwt) {
-        const decoded = jwt.decode(req.cookies.jwt, process.env.JWT_SECRET);
-        const currentUser = await User.findById(decoded.id);
-        if (!currentUser) {
-            return res.status(401).json({
-                status: 'error',
-                message:
-                    'The user belonging to this token does no longer exist',
-            });
+    try {
+        if (req.user) return next();
+        if (req.cookies.jwt) {
+            const decoded = jwt.decode(req.cookies.jwt, process.env.JWT_SECRET);
+            const currentUser = await User.findById(decoded.id);
+            if (!currentUser) {
+                return res.status(401).json({
+                    status: 'fail',
+                    message:
+                        'The user belonging to this token does no longer exist',
+                });
+            }
+            req.user = currentUser;
+            return next();
         }
-        req.user = currentUser;
-        return next();
+        return res.status(401).json({
+            status: 'fail',
+            message: 'You are not logged in! Please login to get access.',
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: 'fail',
+            message: error.message,
+        });
     }
-    return res.status(401).json({
-        status: 'error',
-        message: 'You are not logged in! Please login to get access.',
-    });
 };
 
 exports.logout = (req, res) => {

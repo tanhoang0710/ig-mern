@@ -10,24 +10,31 @@ const User = require('../models/userModel');
 passport.use(
     new LocalStrategy((username, password, done) => {
         User.findOne({ username }, async (err, user) => {
-            if (err) {
-                return done(err);
-            }
-            if (!user) {
-                return done({ message: 'Username is not existed' }, false);
-            }
-            if (user) {
-                const checkCorrectPassword = await bcrypt.compare(
-                    password,
-                    user.password
-                );
-                if (checkCorrectPassword) {
-                    return done(null, user);
+            try {
+                if (err) {
+                    return done(err);
                 }
-                return done(
-                    { message: 'Username or password is invalid' },
-                    false
-                );
+                if (!user) {
+                    return done({ message: 'Username is not existed' }, false);
+                }
+                if (user) {
+                    const checkCorrectPassword = await bcrypt.compare(
+                        password,
+                        user.password
+                    );
+                    if (checkCorrectPassword) {
+                        return done(null, user);
+                    }
+                    return done(
+                        { message: 'Username or password is invalid' },
+                        false
+                    );
+                }
+            } catch (error) {
+                return res.status(500).json({
+                    status: 'fail',
+                    message: error.message,
+                });
             }
         });
     })
