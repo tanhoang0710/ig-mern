@@ -49,6 +49,7 @@ passport.use(
         },
         function (accessToken, refreshToken, profile, done) {
             const { id, displayName, emails, photos } = profile;
+            console.log('🚀 ~ file: passport.config.js:52 ~ profile:', profile);
             // tìm hoặc lưu vào DB
             User.findOne(
                 {
@@ -104,10 +105,12 @@ passport.use(
                         User.findOrCreate(
                             {
                                 githubId: id,
-                                fullname: displayName,
-                                email: emails[0].value,
-                                username: username,
-                                avatar: photos[0].value,
+                                fullname: displayName || username + '123',
+                                email:
+                                    emails?.[0].value ||
+                                    'tanhoang0710@gmail.com',
+                                username: username + '123',
+                                avatar: photos?.[0].value,
                                 password: username,
                                 googleId: '',
                             },
